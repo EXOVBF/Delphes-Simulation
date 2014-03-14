@@ -16,6 +16,7 @@
 #include "classes/DelphesModule.h"
 
 #include <map>
+#include <vector>
 
 class TClass;
 class TObjArray;
@@ -37,33 +38,26 @@ public:
 
 private:
 
-  void FillParticles(Candidate *candidate, TRefArray *array);
-
-  void ProcessParticles(ExRootTreeBranch *branch, TObjArray *array);
-  void ProcessVertices(ExRootTreeBranch *branch, TObjArray *array);
-  void ProcessTracks(ExRootTreeBranch *branch, TObjArray *array);
-  void ProcessTowers(ExRootTreeBranch *branch, TObjArray *array);
-  void ProcessPhotons(ExRootTreeBranch *branch, TObjArray *array);
-  void ProcessElectrons(ExRootTreeBranch *branch, TObjArray *array);
-  void ProcessMuons(ExRootTreeBranch *branch, TObjArray *array);
-  void ProcessTauJets(ExRootTreeBranch *branch, TObjArray *array);
-  void ProcessJets(ExRootTreeBranch *branch, TObjArray *array);
-  void ProcessMissingET(ExRootTreeBranch *branch, TObjArray *array);
-  void ProcessScalarHT(ExRootTreeBranch *branch, TObjArray *array);
-  void ProcessRho(ExRootTreeBranch *branch, TObjArray *array);
-  void ProcessWeight(ExRootTreeBranch *branch, TObjArray *array);
+  void ProcessLeptons(std::vector<ExRootTreeBranch*> branchVector, std::vector<TObjArray*> arrayVector);
+  void ProcessParticles(std::vector<ExRootTreeBranch*> branchVector, std::vector<TObjArray*> arrayVector);
+  void ProcessJets(std::vector<ExRootTreeBranch*> branchVector, std::vector<TObjArray*> arrayVector);
+  void ProcessMissingET(std::vector<ExRootTreeBranch*> branchVector, std::vector<TObjArray*> arrayVector);
+  void ProcessRho(std::vector<ExRootTreeBranch*> branchVector, std::vector<TObjArray*> arrayVector);
+  void ProcessVertices(std::vector<ExRootTreeBranch*> branchVector, std::vector<TObjArray*> arrayVector);
 
 #ifndef __CINT__
-  typedef void (TreeWriter::*TProcessMethod)(ExRootTreeBranch *, TObjArray *); //!
+  typedef void (TreeWriter::*TProcessMethod)(std::vector<ExRootTreeBranch*>, std::vector<TObjArray*>); //!
 
-  typedef std::map< ExRootTreeBranch *, std::pair< TProcessMethod, TObjArray * > > TBranchMap; //!
+  typedef std::map< std::vector<ExRootTreeBranch*>, std::pair< TProcessMethod, std::vector<TObjArray*> > > TBranchMap; //!
 
   TBranchMap fBranchMap; //!
 
   std::map< TClass *, TProcessMethod > fClassMap; //!
 #endif
 
-  ClassDef(TreeWriter, 1)
+  ClassDef(TreeWriter, 1);
+  int filep,fnlep;
+  int fjet_type;
 };
 
 #endif

@@ -51,8 +51,6 @@ set ExecutionPath {
   UniqueObjectFinder_ak5
   UniqueObjectFinder_CA8
 
-  ScalarHT
-
   TreeWriter
 }
 
@@ -777,22 +775,22 @@ module UniqueObjectFinder UniqueObjectFinder_CA8 {
 ##################
 
 module TreeWriter TreeWriter {
-# add Branch InputArray BranchName BranchClass
-  add Branch Delphes/allParticles Particle GenParticle
-  add Branch TrackMerger/tracks Track Track
+#  add Branch InputArray BranchName BranchClass
+  add Branch UniqueObjectFinder_ak5/electrons Electron Electron
+  add Branch UniqueObjectFinder_ak5/muons Muon Muon
+  add Branch Delphes/allParticles Particle GenParticle 
+  add Branch GenJetFinder_ak5/jets gen_jet_ak5 Jet
+  add Branch UniqueObjectFinder_ak5/jets_ak5 jet_ak5 Jet
+  add Branch GenJetFinder_CA8/jets gen_jet_CA8 Jet  
+  add Branch UniqueObjectFinder_CA8/jets_CA8 jet_CA8 Jet
+  add Branch MissingET/momentum MissingET MissingET
+  add Branch Rho/rho Rho Rho
+  add Branch PileUpMerger/vertices Vertex Vertex
+#  add Branch UniqueObjectFinder_ak5/photons Photon Photon
+#  add Branch ScalarHT/energy ScalarHT ScalarHT
+#  add Branch TrackMerger/tracks Track Track
 #  add Branch Calorimeter/towers Tower Tower
 #  add Branch Calorimeter/eflowTracks EFlowTrack Track
 #  add Branch Calorimeter/eflowTowers EFlowTower Tower
-  add Branch GenJetFinder_ak5/jets GenJet_ak5 Jet
-  add Branch GenJetFinder_CA8/jets GenJet_CA8 Jet
-  add Branch UniqueObjectFinder_ak5/jets_ak5 Jet_ak5 Jet
-  add Branch UniqueObjectFinder_CA8/jets_CA8 Jet_CA8 Jet 
-  add Branch UniqueObjectFinder_ak5/electrons Electron Electron
-  add Branch UniqueObjectFinder_ak5/photons Photon Photon
-  add Branch UniqueObjectFinder_ak5/muons Muon Muon
-  add Branch MissingET/momentum MissingET MissingET
-  add Branch ScalarHT/energy ScalarHT ScalarHT
-  add Branch Rho/rho Rho Rho
-  add Branch PileUpMerger/vertices Vertex Vertex
 }
 
