@@ -58,6 +58,7 @@ private:
   ClassDef(TreeWriter, 1);
   int filep,fnlep;
   int fjet_type;
+  bool fsignal;
 };
 
 #endif

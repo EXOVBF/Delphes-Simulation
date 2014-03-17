@@ -117,6 +117,7 @@ Candidate::Candidate() :
   MeanSqDeltaR(0),
   PTD(0),
   Isolation(0),	// pt_sum/pt_candidate
+  ParticleInCone(0),
   P_in(0), 	//P before momentum smearing
   P_out(0), 	// P after momentum smearing
   PrunedMass(0),
@@ -232,6 +233,7 @@ void Candidate::Copy(TObject &obj) const
   object.MeanSqDeltaR = MeanSqDeltaR;
   object.PTD = PTD;
   object.Isolation = Isolation;
+  object.ParticleInCone = ParticleInCone;
   object.FracPt[0] = FracPt[0];
   object.FracPt[1] = FracPt[1];
   object.FracPt[2] = FracPt[2];
@@ -292,6 +294,7 @@ void Candidate::Clear(Option_t* option)
   P_in = 0.0; //P before momentum smearing
   P_out = 0.0; // P after momentum smearing
   Isolation = 0.0;
+  ParticleInCone = 0.0;
   FracPt[0] = 0.0;
   FracPt[1] = 0.0;
   FracPt[2] = 0.0;

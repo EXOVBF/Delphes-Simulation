@@ -145,7 +145,6 @@ int main(int argc, char *argv[])
   DelphesFactory *factory = 0;
   TObjArray *stableParticleOutputArray = 0, *allParticleOutputArray = 0, *partonOutputArray = 0;
   Long64_t eventCounter, errorCounter;
-  Long64_t numberOfEvents;
 
   Pythia8::Pythia *pythia = 0;
 
@@ -213,7 +212,7 @@ int main(int argc, char *argv[])
     pythia->readString("Beams:frameType = 4");
    	pythia->readString("HadronLevel:Hadronize = on");
 	  pythia->readString(sfile.c_str());      
-	  int startEvent = 0;
+	  int startEvent = 0, endEvent = -1;
     if (argc >= 5) 
     {
       startEvent = atoi(argv[4]);
@@ -221,11 +220,7 @@ int main(int argc, char *argv[])
     }
     if (argc >= 6) 
     {
-      numberOfEvents = atoi(argv[5]);                           
-    }
-    else
-    {
-      numberOfEvents = pythia->mode("Main:numberOfEvents");
+      endEvent = atoi(argv[5]);                           
     }
 
     if(pythia == NULL)
@@ -242,8 +237,12 @@ int main(int argc, char *argv[])
     errorCounter = 0;
     modularDelphes->Clear();
     readStopWatch.Start();
-    for(eventCounter = 0; eventCounter < numberOfEvents && !interrupted; ++eventCounter)
+    for(eventCounter = 0; !interrupted; ++eventCounter)
     {
+      if(eventCounter > endEvent && endEvent != -1)
+      {
+        break;
+      }
       if(eventCounter < startEvent)
       {
         continue;

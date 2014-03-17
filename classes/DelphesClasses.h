@@ -243,6 +243,7 @@ public:
   Float_t EhadOverEem; // ratio of the hadronic versus electromagnetic energy deposited in the calorimeter
   
   Float_t Isolation; // Pt_sum/Pt_candidate in a cone around the electron candidate
+  Float_t ParticleInCone;  //number of particle in a cone around the candidate electron;
   
   Float_t P_in;		//P before input smearing
   Float_t P_out;	//P after momentum smearing
@@ -272,6 +273,7 @@ public:
   Int_t Charge; // muon charge
   
   Float_t Isolation; // Pt_sum/Pt_candidate in a cone around the muon candidate
+  Float_t ParticleInCone;  //number of particle in a cone around the candidate electron;
   
   Float_t P_in;		//P before input smearing
   Float_t P_out;	//P after momentum smearing
@@ -445,6 +447,7 @@ public:
   Float_t  MeanSqDeltaR;
   Float_t  PTD;
   Float_t  Isolation;
+  Float_t  ParticleInCone; 
   Float_t  P_in;
   Float_t  P_out;
   Float_t  FracPt[5];

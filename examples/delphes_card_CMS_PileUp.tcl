@@ -366,7 +366,8 @@ module FastJetFinder Rho {
   set ParameterR 0.9
   set GhostEtaMax 5.0
   
-  add RhoEtaRange 0.0 2.5
+  add RhoEtaRange 0.0 1.5
+  add RhoEtaRange 1.5 2.5
   add RhoEtaRange 2.5 5.0
 
   set JetPTMin 0.0
@@ -792,5 +793,7 @@ module TreeWriter TreeWriter {
 #  add Branch Calorimeter/towers Tower Tower
 #  add Branch Calorimeter/eflowTracks EFlowTrack Track
 #  add Branch Calorimeter/eflowTowers EFlowTower Tower
+
+  set isSignal true;
 }
 

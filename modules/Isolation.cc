@@ -199,6 +199,7 @@ void Isolation::Process()
 
     ratio = sum/candidateMomentum.Pt();
     candidate->Isolation = ratio;
+    candidate->ParticleInCone = counter;
     
     //if((fUsePTSum && sum > fPTSumMax) || ratio > fPTRatioMax) continue;
 

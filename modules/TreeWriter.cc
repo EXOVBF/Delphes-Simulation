@@ -56,6 +56,8 @@ TreeWriter::~TreeWriter()
 
 void TreeWriter::Init()
 { 
+  fsignal = GetBool("isSignal",false);  
+  
 //  fClassMap[Photon::Class()] = &TreeWriter::ProcessPhotons;
   fClassMap[Electron::Class()] = &TreeWriter::ProcessLeptons;
   fClassMap[Muon::Class()] = &TreeWriter::ProcessLeptons;
@@ -122,7 +124,7 @@ void TreeWriter::Init()
         ExRootTreeBranch* branch_lep_4 = NewFloatBranch("lep_isolation");
         ExRootTreeBranch* branch_lep_5 = NewFloatBranch("lep_E_no_smearing");
         ExRootTreeBranch* branch_lep_6 = NewFloatBranch("lep_E_with_smearing");
-        ExRootTreeBranch* branch_lep_7 = NewFloatBranch("lep_Hcal_over_Ecal");
+        ExRootTreeBranch* branch_lep_7 = NewFloatBranch("lep_n_particle_cone");
         ExRootTreeBranch* branch_lep_8 = NewFloatBranch("lep_number");
         ExRootTreeBranch* branch_lep_9 = NewFloatBranch("gen_lep_pt");
         ExRootTreeBranch* branch_lep_10 = NewFloatBranch("gen_lep_eta");
@@ -153,6 +155,7 @@ void TreeWriter::Init()
     //--- GenParticles -> just to tag leptons from tau decay
     if(strcmp(branchName.Data(),"Particle")==0)
     {
+      //--- identify leptons from tau
       ExRootTreeBranch* branchTau = NewFloatBranch("gen_was_tau");
       branchVector[nFill].push_back(branchTau);
       //--- gen MET
@@ -161,7 +164,19 @@ void TreeWriter::Init()
       ExRootTreeBranch* branchPhi = NewFloatBranch("gen_MET_phi");
       branchVector[nFill].push_back(branchMET);
       branchVector[nFill].push_back(branchEta);
-      branchVector[nFill].push_back(branchPhi);
+      branchVector[nFill].push_back(branchPhi);      
+      //--- genXmass
+      if(fsignal)
+      {
+        ExRootTreeBranch* branchX_pt = NewFloatBranch("gen_X_pt");
+        ExRootTreeBranch* branchX_eta = NewFloatBranch("gen_X_eta");
+        ExRootTreeBranch* branchX_phi = NewFloatBranch("gen_X_phi");
+        ExRootTreeBranch* branchX_m = NewFloatBranch("gen_X_mass");
+        branchVector[nFill].push_back(branchX_pt);
+        branchVector[nFill].push_back(branchX_eta);
+        branchVector[nFill].push_back(branchX_phi);
+        branchVector[nFill].push_back(branchX_m);
+      }
       arrayVector[nFill].push_back(array);
       methodVector[nFill] = itClassMap->second;
       nFill++;
@@ -212,10 +227,15 @@ void TreeWriter::Init()
     //--- Rho
     if(strcmp(branchName.Data(),"Rho")==0)
     {
-      ExRootTreeBranch* branchRho = NewFloatBranch("Rho_PU");
-      ExRootTreeBranch* branchRhoFW = NewFloatBranch("Rho_PU_forward");
-      branchVector[nFill].push_back(branchRho);
-      branchVector[nFill].push_back(branchRhoFW);
+      ExRootTreeBranch* branchRho_0 = NewFloatBranch("Rho_PU_barrel");
+      ExRootTreeBranch* branchRho_1 = NewFloatBranch("Rho_PU_endcap");
+      branchVector[nFill].push_back(branchRho_0);
+      branchVector[nFill].push_back(branchRho_1);
+      if(array->GetSize())
+      {
+        ExRootTreeBranch* branchRho_2 = NewFloatBranch("Rho_PU_foward");
+        branchVector[nFill].push_back(branchRho_2);
+      }
       arrayVector[nFill].push_back(array);
       methodVector[nFill] = itClassMap->second;
       nFill++;
@@ -251,14 +271,27 @@ void TreeWriter::ProcessParticles(vector<ExRootTreeBranch*> branchVector, vector
   TIter iterator(arrayVector.at(0));
   TLorentzVector met4vect, momentum_tmp;
   Candidate *candidate = 0;
-  int tau_count=0;
+  int tau_count=0, W1_code=0, W2_code=0;
   vector<float> *was_tau;
   vector<float> *met_gen,*met_phi_gen,*met_eta_gen;
+  vector<float> *x_pt, *x_phi, *x_eta, *x_mass;
   
   was_tau = (vector<float>*)((branchVector.at(0))->NewFloatEntry());
   met_gen = (vector<float>*)((branchVector.at(1))->NewFloatEntry());
   met_eta_gen = (vector<float>*)((branchVector.at(2))->NewFloatEntry());
   met_phi_gen = (vector<float>*)((branchVector.at(3))->NewFloatEntry());
+  if(fsignal)
+  {
+    x_pt = (vector<float>*)((branchVector.at(4))->NewFloatEntry());
+    x_eta = (vector<float>*)((branchVector.at(5))->NewFloatEntry());
+    x_phi = (vector<float>*)((branchVector.at(6))->NewFloatEntry());
+    x_mass = (vector<float>*)((branchVector.at(7))->NewFloatEntry());
+    // initialization
+    x_pt->push_back(0);
+    x_eta->push_back(0);
+    x_phi->push_back(0);
+    x_mass->push_back(0);
+  }
     
   // loop over all particles -> identifies taus and get gen_MET ==> v(s)
   iterator.Reset();
@@ -271,9 +304,19 @@ void TreeWriter::ProcessParticles(vector<ExRootTreeBranch*> branchVector, vector
       met4vect += momentum_tmp;
       n++;
     }
-    if(TMath::Abs(candidate->PID) == 16)
+    if(TMath::Abs(candidate->PID) == 16 && (candidate->M1 == W1_code || candidate->M1 == W2_code))
     {
       tau_count++;
+    }
+    //--- graviton gen infos, save the last gen particle with PID=39 (because it's the good one)
+    if(TMath::Abs(candidate->PID) == 39 )
+    {
+      x_pt->at(0) = (candidate->Momentum).Pt();
+      x_eta->at(0) = (candidate->Momentum).Eta();
+      x_phi->at(0) = (candidate->Momentum).Phi();
+      x_mass->at(0) = (candidate->Momentum).M();
+      W1_code = candidate->D1;
+      W2_code = candidate->D2;  
     }
   }
   was_tau->push_back(tau_count);
@@ -281,7 +324,6 @@ void TreeWriter::ProcessParticles(vector<ExRootTreeBranch*> branchVector, vector
   Double_t cosTheta = TMath::Abs(momentum_tmp.CosTheta());
   met_gen->push_back(momentum_tmp.Et());
   met_eta_gen->push_back((cosTheta == 1.0 ? signPz*999.9 : momentum_tmp.Eta()));
-  //met_eta_gen->push_back(momentum_tmp.Eta());
   met_phi_gen->push_back(momentum_tmp.Phi());
 }
 //------------------------------------------------------------------------------
@@ -306,7 +348,7 @@ void TreeWriter::ProcessVertices(vector<ExRootTreeBranch*> branchVector, vector<
     vertexG++;
   }
   sort(Z.begin(), Z.end());
-  for(int i=1; i<Z.size(); i++)
+  for(unsigned int i=1; i<Z.size(); i++)
   {
     if(TMath::Abs(Z.at(i) - Z.at(i-1)) > 0.1)
     {
@@ -368,7 +410,7 @@ void TreeWriter::ProcessLeptons(vector<ExRootTreeBranch*> branchVector, vector<T
   Candidate *gen_candidate = 0;
   int number_lep=0;
   unsigned int iArray=0;
-  vector<float> *pt, *eta, *phi, *flv, *iso, *Ein, *Eout, *HcalEcal, *nLep;
+  vector<float> *pt, *eta, *phi, *flv, *iso, *Ein, *Eout, *nPartCone, *nLep;
   vector<float> *pt_gen, *eta_gen, *phi_gen;
 
   pt = (vector<float>*)((branchVector.at(0))->NewFloatEntry());
@@ -378,7 +420,7 @@ void TreeWriter::ProcessLeptons(vector<ExRootTreeBranch*> branchVector, vector<T
   iso = (vector<float>*)((branchVector.at(4))->NewFloatEntry());
   Ein = (vector<float>*)((branchVector.at(5))->NewFloatEntry());
   Eout = (vector<float>*)((branchVector.at(6))->NewFloatEntry());
-  HcalEcal = (vector<float>*)((branchVector.at(7))->NewFloatEntry());
+  nPartCone = (vector<float>*)((branchVector.at(7))->NewFloatEntry());
   nLep = (vector<float>*)((branchVector.at(8))->NewFloatEntry());
   pt_gen = (vector<float>*)((branchVector.at(9))->NewFloatEntry());
   eta_gen = (vector<float>*)((branchVector.at(10))->NewFloatEntry());
@@ -401,7 +443,7 @@ void TreeWriter::ProcessLeptons(vector<ExRootTreeBranch*> branchVector, vector<T
       iso->push_back(candidate->Isolation);
       Ein->push_back(candidate->P_in);
       Eout->push_back(candidate->P_out);
-      HcalEcal->push_back((candidate->Ehad)/(candidate->Eem));
+      nPartCone->push_back((candidate->ParticleInCone));
       flv->push_back(TMath::Abs(candidate->PID));
       //--- gen lep
       gen_candidate = static_cast<Candidate*>(candidate->GetCandidates()->At(0));
@@ -504,15 +546,23 @@ void TreeWriter::ProcessMissingET(vector<ExRootTreeBranch*> branchVector, vector
 void TreeWriter::ProcessRho(vector<ExRootTreeBranch*> branchVector, vector<TObjArray*> arrayVector)
 {
   TIter iterator(arrayVector.at(0));
-  vector<float> *rho_tmp,*rho_fw_tmp;
+  Candidate* candidate=0;
+  vector<float> *rho_tmp[3];
+  int i=0;
 
   // loop over all rho
   iterator.Reset();
-  rho_tmp = (vector<float>*)((branchVector.at(0))->NewFloatEntry());
-  rho_fw_tmp = (vector<float>*)((branchVector.at(1))->NewFloatEntry());
-
-  rho_tmp->push_back((static_cast<Candidate*>(iterator.Next()))->Momentum.E());
-  rho_fw_tmp->push_back((static_cast<Candidate*>(iterator.Next()))->Momentum.E());
+  rho_tmp[0] = (vector<float>*)((branchVector.at(0))->NewFloatEntry());
+  rho_tmp[1] = (vector<float>*)((branchVector.at(1))->NewFloatEntry());
+  if(branchVector.size()==3)
+  {
+    rho_tmp[2] = (vector<float>*)((branchVector.at(2))->NewFloatEntry());
+  }
+  while((candidate = static_cast<Candidate*>(iterator.Next())))
+  {
+    rho_tmp[i]->push_back(candidate->Momentum.E());
+    i++;
+  }
 }
 
 //------------------------------------------------------------------------------
