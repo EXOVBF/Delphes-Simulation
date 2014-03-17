@@ -17,6 +17,7 @@ Delphes-Simulation
 * Compile on slc6
 
 ```
+- source /afs/cern.ch/sw/lcg/contrib/gcc/4.6/x86_64-slc6-gcc46-opt/setup.sh 
 - cmsrel CMSSW_6_2_0 (or other) + cmsenv
 - source setup_slc6.sh
 - make -j 16
