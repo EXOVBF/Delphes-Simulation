@@ -2,6 +2,7 @@
 
 source /afs/cern.ch/sw/lcg/contrib/gcc/4.6/x86_64-slc6-gcc46-opt/setup.sh 
 source /afs/cern.ch/sw/lcg/app/releases/ROOT/5.34.09/x86_64-slc6-gcc46-opt/root/bin/thisroot.sh
+source /afs/cern.ch/sw/lcg/contrib/gcc/4.6/x86_64-slc6-gcc46-opt/setup.sh
 
 export SCRAM_ARCH=slc6_amd64_gcc472
 export LD_LIBRARY_PATH=/afs/cern.ch/sw/lcg/external/MCGenerators_lcgcmt66/pythia8/183/x86_64-slc6-gcc46-opt/lib/:$LD_LIBRARY_PATH
