@@ -298,7 +298,8 @@ void TreeWriter::ProcessParticles(vector<ExRootTreeBranch*> branchVector, vector
   int n=0;
   while((candidate = static_cast<Candidate*>(iterator.Next())))
   {
-    if(TMath::Abs(candidate->PID) == 16 || TMath::Abs(candidate->PID) == 14 || TMath::Abs(candidate->PID) == 12)
+    int PID_tmp = TMath::Abs(candidate->PID);
+    if((PID_tmp == 16 || PID_tmp == 14 || PID_tmp == 12) && candidate->Status > 0 && candidate->IsPU == 0)
     {
       momentum_tmp = candidate->Momentum;
       met4vect += momentum_tmp;
