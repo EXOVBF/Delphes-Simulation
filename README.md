@@ -21,7 +21,7 @@ Delphes-Simulation
 - cmsrel CMSSW_6_2_0 (or other) + cmsenv
 - source setup_slc6.sh
 - ./configure
-- make -j 16
+- make -j 4
 ```
 * Execute on slc6
  
