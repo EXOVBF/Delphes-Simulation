@@ -211,7 +211,7 @@ int main(int argc, char *argv[])
     try
     {
         inputFile = argv[2];
-        outputFile = TFile::Open(argv[3], "CREATE");
+        outputFile = TFile::Open(argv[3], "RECREATE");
 
         if(outputFile == NULL)
         {
@@ -244,7 +244,7 @@ int main(int argc, char *argv[])
         //--- Initialize Les Houches Event File run. List initialization information.
         std::string sSeed = "0";
         std::string sfile = "Beams:LHEF ="+inputFile;
-        std::string sRandomSeed = "Random:seed = "+sSeed;
+        std::string sRandomSeed = "Random:seed = 0";
         //--- random seed from start event number
         pythia->readString("Random:setSeed = on");
         pythia->readString(sRandomSeed.c_str());        
@@ -260,7 +260,6 @@ int main(int argc, char *argv[])
         if (argc >= 6) 
         {
             startEvent = atoi(argv[5]);
-            sSeed = argv[5];
         }
         if (argc >= 7) 
         {

@@ -65,7 +65,7 @@ module PileUpMerger PileUpMerger {
   set VertexOutputArray vertices
 
   # pre-generated minbias input file
-  set PileUpFile ../MC_data/MinBias100K_13TeV.pileup
+  set PileUpFile /afs/cern.ch/user/g/govoni/scratch0/Simone/Delphes-Simulation/cards/MinBias100K_13TeV.pileup
 
   # average expected pile up
   set MeanPileUp 50
@@ -459,7 +459,7 @@ module PileUpJetID PileUpJetID_ak5 {
   
   set OutputArray jets
 
-  set UseConstituents 0
+  set UseConstituents 1
   set ParameterR 0.5
 
   set JetPTMin 15.0
@@ -477,7 +477,7 @@ module PileUpJetID PileUpJetID_CA8 {
   
   set OutputArray jets
 
-  set UseConstituents 0
+  set UseConstituents 1
   set ParameterR 0.8
 
   set JetPTMin 15.0
@@ -794,6 +794,6 @@ module TreeWriter TreeWriter {
 #  add Branch Calorimeter/eflowTracks EFlowTrack Track
 #  add Branch Calorimeter/eflowTowers EFlowTower Tower
 
-  set isSignal true;
+  set isSignal false;
 }
 
