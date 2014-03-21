@@ -207,23 +207,8 @@ EXECUTABLE_OBJ +=  \
 	tmp/readers/DelphesSTDHEP.$(ObjSuf)
 
 ifeq ($(HAS_CMSSW),true)
-DelphesCMSFWLite$(ExeSuf): \
-	tmp/readers/DelphesCMSFWLite.$(ObjSuf)
-
-tmp/readers/DelphesCMSFWLite.$(ObjSuf): \
-	readers/DelphesCMSFWLite.cpp \
-	modules/Delphes.h \
-	classes/DelphesStream.h \
-	classes/DelphesClasses.h \
-	classes/DelphesFactory.h \
-	external/ExRootAnalysis/ExRootTreeWriter.h \
-	external/ExRootAnalysis/ExRootTreeBranch.h \
-	external/ExRootAnalysis/ExRootProgressBar.h
 EXECUTABLE +=  \
-	DelphesCMSFWLite$(ExeSuf)
-
-EXECUTABLE_OBJ +=  \
-	tmp/readers/DelphesCMSFWLite.$(ObjSuf)
+	
 
 endif
 
