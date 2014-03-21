@@ -38,9 +38,8 @@ set ExecutionPath {
 
   BTagging
 
-  UniqueObjectFinder
-
-  ScalarHT
+  UniqueObjectFinder_ak5
+  UniqueObjectFinder_CA8
 
   TreeWriter
 }
@@ -556,14 +555,22 @@ module TauTagging TauTagging {
 # Find uniquely identified photons/electrons/tau/jets
 #####################################################
 
-module UniqueObjectFinder UniqueObjectFinder {
+module UniqueObjectFinder UniqueObjectFinder_ak5 {
 # earlier arrays take precedence over later ones
 # add InputArray InputArray OutputArray
   add InputArray PhotonIsolation/photons photons
   add InputArray ElectronIsolation/electrons electrons
   add InputArray MuonIsolation/muons muons
   add InputArray JetEnergyScale_ak5/jets jets_ak5
-  add InputArray JetEnergyScale_CA8/jets jets_CA8  
+}
+
+module UniqueObjectFinder UniqueObjectFinder_CA8 {
+# earlier arrays take precedence over later ones
+# add InputArray InputArray OutputArray
+  add InputArray PhotonIsolation/photons photons
+  add InputArray ElectronIsolation/electrons electrons
+  add InputArray MuonIsolation/muons muons
+  add InputArray JetEnergyScale_CA8/jets jets_CA8
 }
 
 ##################
@@ -571,20 +578,22 @@ module UniqueObjectFinder UniqueObjectFinder {
 ##################
 
 module TreeWriter TreeWriter {
-# add Branch InputArray BranchName BranchClass
-  add Branch Delphes/allParticles Particle GenParticle
-  add Branch TrackMerger/tracks Track Track
-  add Branch Calorimeter/towers Tower Tower
-  add Branch Calorimeter/eflowTracks EFlowTrack Track
-  add Branch Calorimeter/eflowTowers EFlowTower Tower
-  add Branch GenJetFinder_ak5/jets GenJet_ak5 Jet
-  add Branch GenJetFinder_CA8/jets GenJet_CA8 Jet
-  add Branch FastJetFinder_ak5/jets Jet_ak5 Jet
-  add Branch FastJetFinder_CA8/jets Jet_CA8 Jet 
-  add Branch ElectronIsolation/electrons Electron Electron
-  add Branch UniqueObjectFinder/photons Photon Photon
-  add Branch MuonIsolation/muons Muon Muon
+#  add Branch InputArray BranchName BranchClass
+  add Branch UniqueObjectFinder_ak5/electrons Electron Electron
+  add Branch UniqueObjectFinder_ak5/muons Muon Muon
+  add Branch Delphes/allParticles Particle GenParticle 
   add Branch MissingET/momentum MissingET MissingET
-  add Branch ScalarHT/energy ScalarHT ScalarHT
+  add Branch GenJetFinder_ak5/jets gen_jet_ak5 Jet
+  add Branch UniqueObjectFinder_ak5/jets_ak5 jet_ak5 Jet
+  add Branch GenJetFinder_CA8/jets gen_jet_CA8 Jet  
+  add Branch UniqueObjectFinder_CA8/jets_CA8 jet_CA8 Jet
+#  add Branch Rho/rho Rho Rho
+#  add Branch PileUpMerger/vertices Vertex Vertex
+#  add Branch UniqueObjectFinder_ak5/photons Photon Photon
+#  add Branch ScalarHT/energy ScalarHT ScalarHT
+#  add Branch TrackMerger/tracks Track Track
+#  add Branch Calorimeter/towers Tower Tower
+#  add Branch Calorimeter/eflowTracks EFlowTrack Track
+#  add Branch Calorimeter/eflowTowers EFlowTower Tower
 }
 

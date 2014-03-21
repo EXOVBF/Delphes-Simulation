@@ -65,10 +65,10 @@ module PileUpMerger PileUpMerger {
   set VertexOutputArray vertices
 
   # pre-generated minbias input file
-  set PileUpFile /afs/cern.ch/user/g/govoni/scratch0/Simone/Delphes-Simulation/cards/MinBias100K_13TeV.pileup
+  set PileUpFile /afs/cern.ch/user/s/spigazzi/work/EXOVBF/MC_Data/minBias/MinBias500K_8TeV.pileup
 
-  # average expected pile up
-  set MeanPileUp 50
+  # average expected pile up 20 for LHC-8TeV
+  set MeanPileUp 20	
   
   # maximum spread in the beam direction in m 
   set ZVertexSpread 0.10
