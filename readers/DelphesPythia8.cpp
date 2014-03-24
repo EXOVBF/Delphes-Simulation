@@ -43,6 +43,11 @@ bool lhe_event_preselection(vector< vector<float> >* LHE_event, float Mjj_cut)
             outQuark.push_back(tmp4vect);
         }
     }
+    //--- for W+1jet/2jets    
+    if(outQuark.size() < 3 )
+    {
+        return true;
+    }    
     //--- apply the VBF preselection cut on Mjj
     for(int iQuark = 0; iQuark < outQuark.size(); iQuark++)
     {
@@ -242,9 +247,15 @@ int main(int argc, char *argv[])
         //----- Initialize pythia -----
         pythia = new Pythia8::Pythia;
         //--- Initialize Les Houches Event File run. List initialization information.
-        std::string sSeed = "0";
+        std::string sSeed = "0";  
+	    int startEvent = 0, nEvent = -1;      
+        if (argc >= 6) 
+        {
+            startEvent = atoi(argv[5]);
+            sSeed = argv[5];
+        }
         std::string sfile = "Beams:LHEF ="+inputFile;
-        std::string sRandomSeed = "Random:seed = 0";
+        std::string sRandomSeed = "Random:seed = "+sSeed;
         //--- random seed from start event number
         pythia->readString("Random:setSeed = on");
         pythia->readString(sRandomSeed.c_str());        
@@ -256,11 +267,6 @@ int main(int argc, char *argv[])
 	    {
 	        Mjj_cut = atoi(argv[4]);
 	    }
-	    int startEvent = 0, nEvent = -1;
-        if (argc >= 6) 
-        {
-            startEvent = atoi(argv[5]);
-        }
         if (argc >= 7) 
         {
             nEvent = atoi(argv[6]);                                                     
@@ -367,7 +373,7 @@ int main(int argc, char *argv[])
                     }
                     else
                     {
-                        cout << "### ERROR: couldn't skip event" << endl;
+                        cout << "### ERROR: can't skip the event" << endl;
                     }
                 }
                 eventCounter++;
