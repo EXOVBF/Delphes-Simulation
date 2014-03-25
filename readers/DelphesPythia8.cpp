@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
+#include <fstream>
 
 #include <signal.h>
 
@@ -247,6 +248,7 @@ int main(int argc, char *argv[])
         //----- Initialize pythia -----
         pythia = new Pythia8::Pythia;
         //--- Initialize Les Houches Event File run. List initialization information.
+        //--- random seed from start event number
         std::string sSeed = "0";  
 	    int startEvent = 0, nEvent = -1;      
         if (argc >= 6) 
@@ -256,7 +258,6 @@ int main(int argc, char *argv[])
         }
         std::string sfile = "Beams:LHEF ="+inputFile;
         std::string sRandomSeed = "Random:seed = "+sSeed;
-        //--- random seed from start event number
         pythia->readString("Random:setSeed = on");
         pythia->readString(sRandomSeed.c_str());        
         pythia->readString("Beams:frameType = 4");
@@ -343,10 +344,9 @@ int main(int argc, char *argv[])
                 {
                     if(!pythia->next())
                     {
-                        //--- If failure because reached end of file then exit event loop
-                        if (pythia->info.atEndOfFile())
+                        // If failure because reached end of file then exit event loop.
+        	    	    if (pythia->info.atEndOfFile()) 
                         {
-                            cerr << "Aborted since reached end of Les Houches Event File" << endl;
                             break;
                         }
                         //--- keep trace of faulty events
