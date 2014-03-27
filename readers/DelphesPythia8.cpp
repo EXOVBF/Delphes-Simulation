@@ -395,7 +395,7 @@ int main(int argc, char *argv[])
         progressBar.Finish();
 
         cout << "--------------------Statistics---------------------" << endl;
-        cout << "-#######  readed events:      " << eventCounter << endl; 
+        cout << "-#######  read events:        " << eventCounter << endl; 
         cout << "-#######  failed events:      " << errorCounter << endl;
         cout << "-#######  skipped events:     " << skippedCounter << endl;
         cout << "---------------------------------------------------" << endl;
