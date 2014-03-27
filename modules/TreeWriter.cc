@@ -487,7 +487,7 @@ void TreeWriter::ProcessLeptons(vector<ExRootTreeBranch*> branchVector, vector<T
       Ein->push_back(candidate->P_in);
       Eout->push_back(candidate->P_out);
       nPartCone->push_back((candidate->ParticleInCone));
-      flv->push_back(TMath::Abs(candidate->PID));
+      flv->push_back(candidate->PID);
       //--- gen lep
       gen_candidate = static_cast<Candidate*>(candidate->GetCandidates()->At(0));
       momentum = gen_candidate->Momentum;
