@@ -82,7 +82,6 @@ void EnergySmearing::Process()
 {
   Candidate *candidate, *mother;
   Double_t energy, eta, phi;
-
   fItInputArray->Reset();
   while((candidate = static_cast<Candidate*>(fItInputArray->Next())))
   {

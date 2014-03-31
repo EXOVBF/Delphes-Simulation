@@ -104,7 +104,7 @@ void Delphes::Init()
   ExRootConfParam param = confReader->GetParam("::ExecutionPath");
   Long_t i, size = param.GetSize();
 
-  gRandom->SetSeed(confReader->GetInt("::RandomSeed", 0));
+  gRandom->SetSeed(confReader->GetInt("::RandomSeed", 1));
 
   for(i = 0; i < size; ++i)
   {

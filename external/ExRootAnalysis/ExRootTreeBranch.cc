@@ -70,6 +70,7 @@ ExRootTreeBranch::ExRootTreeBranch(const char *name, TTree *tree) :
 
 ExRootTreeBranch::~ExRootTreeBranch()
 {
+  //if(fDataFloat) delete fDataFloat;  
   if(fData) delete fData;
 }
 
@@ -100,7 +101,7 @@ TObject *ExRootTreeBranch::NewEntry()
 
 vector<float>* ExRootTreeBranch::NewFloatEntry()
 {
-    fDataFloat->erase(fDataFloat->begin(), fDataFloat->end());
+    fDataFloat->clear();
     return fDataFloat;
 }
 
@@ -109,6 +110,7 @@ vector<float>* ExRootTreeBranch::NewFloatEntry()
 void ExRootTreeBranch::Clear()
 {
   fSize = 0;
+  //if(fDataFloat) fDataFloat->clear();
   if(fData) fData->Clear();
 }
 

@@ -180,9 +180,11 @@ void ParticlePropagator::Process()
         switch(TMath::Abs(candidate->PID))
         {
           case 11:
+          cout << "electron" << endl;
             fElectronOutputArray->Add(candidate);
             break;
           case 13:
+          cout << "moun" << endl;
             fMuonOutputArray->Add(candidate);
             break;
           default:

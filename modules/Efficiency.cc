@@ -93,7 +93,10 @@ void Efficiency::Process()
     pt = candidateMomentum.Pt();
 
     // apply an efficency formula
-    if(gRandom->Uniform() > fFormula->Eval(pt, eta)) continue;
+    if(gRandom->Uniform() > fFormula->Eval(pt, eta)) 
+    {
+        continue;
+    }
     
     fOutputArray->Add(candidate);
   }

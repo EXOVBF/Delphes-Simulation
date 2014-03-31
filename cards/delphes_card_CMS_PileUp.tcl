@@ -756,18 +756,18 @@ module TauTagging TauTagging {
 module UniqueObjectFinder UniqueObjectFinder_ak5 {
 # earlier arrays take precedence over later ones
 # add InputArray InputArray OutputArray
-  add InputArray PhotonIsolation/photons photons
   add InputArray ElectronIsolation/electrons electrons
   add InputArray MuonIsolation/muons muons
+  add InputArray PhotonIsolation/photons photons
   add InputArray JetEnergyScale_ak5/jets jets_ak5
 }
 
 module UniqueObjectFinder UniqueObjectFinder_CA8 {
 # earlier arrays take precedence over later ones
 # add InputArray InputArray OutputArray
-  add InputArray PhotonIsolation/photons photons
   add InputArray ElectronIsolation/electrons electrons
   add InputArray MuonIsolation/muons muons
+  add InputArray PhotonIsolation/photons photons  
   add InputArray JetEnergyScale_CA8/jets jets_CA8
 }
 

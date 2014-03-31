@@ -86,7 +86,6 @@ void TreeWriter::Init()
   fnlep=0;
   filep=0;
   
-  size = param.GetSize();
   for(i = 0; i < size/3; ++i)
   {
     branchInputArray = param[i*3].GetString();
@@ -109,7 +108,9 @@ void TreeWriter::Init()
     }
     
     array = ImportArray(branchInputArray);
-    
+    //cout << branchName.Data() << "   " << array->GetEntries() << endl;
+    //int help;
+    //cin >> help;
     //--- Leptons
     if(strcmp(branchName.Data(),"Electron")==0 || strcmp(branchName.Data(),"Muon")==0)
     {
@@ -143,12 +144,12 @@ void TreeWriter::Init()
         methodVector[nFill] = itClassMap->second;
         filep=nFill;
         nFill++;
+        fnlep=1;
       }
       else
       {
         arrayVector[filep].push_back(array);
-      }      
-      fnlep++;
+      }
     }
     //--- GenParticles -> just to tag leptons from tau decay
     if(strcmp(branchName.Data(),"Particle")==0)
@@ -339,7 +340,8 @@ void TreeWriter::ProcessParticles(vector<ExRootTreeBranch*> branchVector, vector
   {
     int PID_tmp = TMath::Abs(candidate->PID);
     int M1 = candidate->M1 + 1;
-    int M2 = candidate->M2 + 1;
+    int D1 = candidate->D1 - 1;
+    int D2 = candidate->D2 - 1;
     if((PID_tmp == 16 || PID_tmp == 14 || PID_tmp == 12) && candidate->Status > 0 && candidate->IsPU == 0)
     {
       momentum_tmp = candidate->Momentum;
@@ -353,8 +355,8 @@ void TreeWriter::ProcessParticles(vector<ExRootTreeBranch*> branchVector, vector
     {
       tau_count++;
     }
-    //--- graviton gen infos, save the last gen particle with PID=39 (because it's the good one)
-    if(PID_tmp == 39 && candidate->D1 == W1_code && candidate->D2 == W2_code)
+    //--- graviton gen infos, find the right graviton linking it with the two W
+    if(PID_tmp == 39)//&& ((D1 == W1_code && D2 == W2_code) || (D1 == W2_code && D2 == W1_code)) )
     {
       x_pt->at(0) = (candidate->Momentum).Pt();
       x_eta->at(0) = (candidate->Momentum).Eta();
@@ -469,7 +471,7 @@ void TreeWriter::ProcessLeptons(vector<ExRootTreeBranch*> branchVector, vector<T
   eta_gen = (vector<float>*)((branchVector.at(10))->NewFloatEntry());
   phi_gen = (vector<float>*)((branchVector.at(11))->NewFloatEntry());
   
-  while(iArray < arrayVector.size())
+  while(iArray < 2)//arrayVector.size())
   {
     TIter iterator = arrayVector.at(iArray);
     (arrayVector.at(iArray))->Sort();
@@ -500,7 +502,8 @@ void TreeWriter::ProcessLeptons(vector<ExRootTreeBranch*> branchVector, vector<T
     }
     iArray++;
   }
-  nLep->push_back(number_lep);   
+  nLep->push_back(number_lep);
+  cout << "number of leptons:  " << number_lep << endl;
 }
 
 //------------------------------------------------------------------------------
