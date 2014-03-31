@@ -1,2 +1,2 @@
-*DELPHES-SIMULATION:
+DELPHES-SIMULATION:
 ====================
