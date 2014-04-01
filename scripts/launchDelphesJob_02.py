@@ -16,7 +16,7 @@ def submitJob (jobID, queue, events, mqqCut, fileName):
     jobname = 'jDel_'+queue+'_'+jobID+'.sh'
     f = open (jobname, 'w')
     f.write ('#!/bin/sh' + '\n\n')
-    f.write ('cmsStage -f /store/user/rgerosa/DelphesAnalysis/kk_graviton/MadGraph5___8TeV_ppVBF-BulkGraviton___W-lnulnu___W-jj/'+fileName+'.lhe . \n\n')
+    f.write ('cmsStage -f /store/user/rgerosa/DelphesAnalysis/kk_graviton_corrected/'+fileName+'.lhe . \n\n')
     f.write ('export SCRAM_ARCH=slc6_amd64_gcc472 \n')
     f.write ('cd /afs/cern.ch/user/s/spigazzi/work/EXOVBF/CMSSW_6_2_0/src/ \n')
     f.write ('eval `scramv1 runtime -sh` \n')

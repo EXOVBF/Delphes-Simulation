@@ -41,6 +41,7 @@ if __name__ == '__main__':
     parser.add_argument('-q', '--queue' , default = '8nh', help='batch queue (1nd)')
     parser.add_argument('-c', '--mqqCut' , default = '150', help='cut in mqq (150)')
     parser.add_argument('-n', '--events' , default = '10000', help='total number of events per job(10000)')
+    parser.add_argument('-o', '--offset' , default = 0, type=int, help='job numbering offset')
     
     args = parser.parse_args ()
 
@@ -48,7 +49,7 @@ if __name__ == '__main__':
 
     print 'submitting', args.jobsNum, 'jobs to queue', args.queue
     for i in range (0, int(args.jobsNum)):
-        submitJob (str (i), args.queue, args.events, args.mqqCut, args.fileName, args.lheDir) 
+        submitJob (str (i+args.offset), args.queue, args.events, args.mqqCut, args.fileName, args.lheDir) 
 
 
 
