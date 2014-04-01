@@ -83,10 +83,10 @@ void ConvertInput(Long64_t eventCounter, Pythia8::Pythia *pythia,
 {
     int i;
 
-    HepMCEvent *element;
-    Candidate *candidate;
-    TDatabasePDG *pdg;
-    TParticlePDG *pdgParticle;
+    HepMCEvent *element=0;
+    Candidate *candidate=0;
+    TDatabasePDG *pdg=0;
+    TParticlePDG *pdgParticle=0;
     Int_t pdgCode;
 
     Int_t pid, status;
@@ -121,9 +121,10 @@ void ConvertInput(Long64_t eventCounter, Pythia8::Pythia *pythia,
     for(i = 0; i < pythia->event.size(); ++i)
     {
         Pythia8::Particle &particle = pythia->event[i];
-
+        
         pid = particle.id();
         status = pythia->event.statusHepMC(i);
+
         px = particle.px(); py = particle.py(); pz = particle.pz(); e = particle.e(); mass = particle.m();
         x = particle.xProd(); y = particle.yProd(); z = particle.zProd(); t = particle.tProd();
 
@@ -150,10 +151,6 @@ void ConvertInput(Long64_t eventCounter, Pythia8::Pythia *pythia,
 
         allParticleOutputArray->Add(candidate);
 
-        if(!pdgParticle)
-        {
-//            cout << "something went wrong with TDatabasePDG! who cares?" << endl;
-        }
         if(status == 1)
         {
             stableParticleOutputArray->Add(candidate);
@@ -272,7 +269,7 @@ int main(int argc, char *argv[])
         if (argc >= 6) 
         {
             startEvent = atoi(argv[5]);
-            sSeed = argv[5];
+            //sSeed = argv[5];
         }
         if (argc >= 7) 
         {
@@ -283,9 +280,9 @@ int main(int argc, char *argv[])
         std::string sRandomSeed = "Random:seed = "+sSeed;
         //--- random seed from start event number
         pythia->readString("Random:setSeed = on");
-        pythia->readString(sRandomSeed.c_str());        
+        pythia->readString("HadronLevel:Hadronize = on");
+//        pythia->readString(sRandomSeed.c_str());        
         pythia->readString("Beams:frameType = 4");
-     	pythia->readString("HadronLevel:Hadronize = on");
 	    pythia->readString(sfile.c_str());
 
         pythia->init();

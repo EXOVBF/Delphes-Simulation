@@ -296,6 +296,7 @@ module Calorimeter Calorimeter {
   # energy fractions for e, gamma 
   add EnergyFraction {11} {1.0 0.0}
   add EnergyFraction {22} {1.0 0.0}
+  add EnergyFraction {111} {1.0 0.0}
   # energy fractions pi0 pi
   # energy fractions for muon, neutrinos and neutralinos
   add EnergyFraction {12} {0.0 0.0}
@@ -756,18 +757,18 @@ module TauTagging TauTagging {
 module UniqueObjectFinder UniqueObjectFinder_ak5 {
 # earlier arrays take precedence over later ones
 # add InputArray InputArray OutputArray
-  add InputArray PhotonIsolation/photons photons
   add InputArray ElectronIsolation/electrons electrons
   add InputArray MuonIsolation/muons muons
+  add InputArray PhotonIsolation/photons photons
   add InputArray JetEnergyScale_ak5/jets jets_ak5
 }
 
 module UniqueObjectFinder UniqueObjectFinder_CA8 {
 # earlier arrays take precedence over later ones
 # add InputArray InputArray OutputArray
-  add InputArray PhotonIsolation/photons photons
   add InputArray ElectronIsolation/electrons electrons
   add InputArray MuonIsolation/muons muons
+  add InputArray PhotonIsolation/photons photons  
   add InputArray JetEnergyScale_CA8/jets jets_CA8
 }
 
@@ -777,8 +778,10 @@ module UniqueObjectFinder UniqueObjectFinder_CA8 {
 
 module TreeWriter TreeWriter {
 #  add Branch InputArray BranchName BranchClass
-  add Branch UniqueObjectFinder_ak5/electrons Electron Electron
-  add Branch UniqueObjectFinder_ak5/muons Muon Muon
+#  add Branch UniqueObjectFinder_ak5/electrons Electron Electron
+#  add Branch UniqueObjectFinder_ak5/muons Muon Muon
+  add Branch ElectronIsolation/electrons Electron Electron
+  add InputArray MuonIsolation/muons Muon Muon
   add Branch Delphes/allParticles Particle GenParticle 
   add Branch MissingET/momentum MissingET MissingET
   add Branch GenJetFinder_ak5/jets gen_jet_ak5 Jet

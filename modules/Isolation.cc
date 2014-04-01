@@ -153,7 +153,10 @@ void Isolation::Process()
   fFilter->Reset();
   isolationArray = fFilter->GetSubArray(fClassifier, 0);
 
-  if(isolationArray == 0) return;
+  if(isolationArray == 0) 
+  {
+    return;
+  }
 
   TIter itIsolationArray(isolationArray);
 

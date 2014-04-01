@@ -121,7 +121,7 @@ void PileUpMerger::Process()
     candidate->Position.SetXYZT(x, y, z+dz, t+dt);
     fParticleOutputArray->Add(candidate);
   }
-
+    
   factory = GetFactory();
 
   vertexcandidate = factory->NewCandidate();
