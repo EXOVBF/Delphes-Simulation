@@ -339,6 +339,14 @@ void TreeWriter::ProcessParticles(vector<ExRootTreeBranch*> branchVector, vector
     }
     i++;
   }
+  if( W1_code.size() == 0 )
+  {
+    W1_code.push_back(-3);
+  }
+  if( W2_code.size() == 0 )
+  {
+    W2_code.push_back(-3);
+  }
   iterator.Reset();  
   while((candidate = static_cast<Candidate*>(iterator.Next())))
   {
