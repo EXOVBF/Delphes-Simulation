@@ -10,11 +10,10 @@ export PATH=/afs/cern.ch/sw/lcg/external/MCGenerators_lcgcmt66/pythia8/183/x86_6
 export PATH=afs/cern.ch/sw/lcg/external/HepMC/2.06.08/x86_64-slc6-gcc46-opt/include/:$PATH
 export LD_LIBRARY_PATH=/afs/cern.ch/sw/lcg/external/HepMC/2.06.08/x86_64-slc6-gcc46-opt/lib/:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=/afs/cern.ch/sw/lcg/external/fastjet/3.0.3/x86_64-slc6-gcc46-opt/lib/:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=/afs/cern.ch/sw/lcg/external/MCGenerators/lhapdf/5.8.9/x86_64-slc6-gcc46-opt/lib/:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/afs/cern.ch/sw/lcg/external/MCGenerators/lhapdf/5.8.9/x86_64-slc6-gcc46-opt/lib:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=/afs/cern.ch/sw/lcg/external/MCGenerators_lcgcmt66/pythia8/183/x86_64-slc6-gcc46-opt/lib/:$LD_LIBRARY_PATH
 export LD_LIBRARY_PATH=/afs/cern.ch/sw/lcg/external/HepMC/2.06.08/x86_64-slc6-gcc46-opt/lib/:$LD_LIBRARY_PATH
-export LD_LIBRARY_PATH=/afs/cern.ch/user/l/lbrianza/work/SIMONE/delphes_code/:$LD_LIBRARY_PATH
 export PYTHIA8=/afs/cern.ch/sw/lcg/external/MCGenerators_lcgcmt66/pythia8/183/x86_64-slc6-gcc46-opt
 export PYTHIA8DATA=/afs/cern.ch/sw/lcg/external/MCGenerators_lcgcmt66/pythia8/183/x86_64-slc6-gcc46-opt/xmldoc
-export LHAPATH=/afs/cern.ch/sw/lcg/external/MCGenerators/lhapdf/5.8.9/share/PDFsets
+export LHAPDF=/afs/cern.ch/sw/lcg/external/MCGenerators/lhapdf/5.8.9/x86_64-slc6-gcc46-opt/lib/
 

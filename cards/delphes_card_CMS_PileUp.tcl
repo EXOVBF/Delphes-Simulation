@@ -778,10 +778,8 @@ module UniqueObjectFinder UniqueObjectFinder_CA8 {
 
 module TreeWriter TreeWriter {
 #  add Branch InputArray BranchName BranchClass
-#  add Branch UniqueObjectFinder_ak5/electrons Electron Electron
-#  add Branch UniqueObjectFinder_ak5/muons Muon Muon
-  add Branch ElectronIsolation/electrons Electron Electron
-  add Branch MuonIsolation/muons Muon Muon
+  add Branch UniqueObjectFinder_ak5/electrons Electron Electron
+  add Branch UniqueObjectFinder_ak5/muons Muon Muon
   add Branch Delphes/allParticles Particle GenParticle 
   add Branch MissingET/momentum MissingET MissingET
   add Branch GenJetFinder_ak5/jets gen_jet_ak5 Jet

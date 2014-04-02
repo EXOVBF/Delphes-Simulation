@@ -281,14 +281,14 @@ int main(int argc, char *argv[])
         //--- random seed from start event number
         pythia->readString("Random:setSeed = on");
         pythia->readString("HadronLevel:Hadronize = on");
-//        pythia->readString(sRandomSeed.c_str());        
+        pythia->readString(sRandomSeed.c_str());        
         pythia->readString("Beams:frameType = 4");
 	    pythia->readString(sfile.c_str());
 
         pythia->init();
         //------------------------------------------------------------------------------------------
         //----- initialize fast lhe file reader for preselection -----
-        ifstream inputLHE (inputFile, ios::in);
+        ifstream inputLHE (inputFile.c_str(), ios::in);
         int count=-1;
         int skippedCounter = 0;
         char buffer[256];

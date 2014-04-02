@@ -289,13 +289,18 @@ void TreeWriter::Finish()
 }
 
 //------------------------------------------------------------------------------
+// GenParticles
+// all the trick in here is done to manage the mess in the Pythia8 event listing.
+// due tu showering the same particle may appears multiple times, in sometimes the good
+// one is the first, sometimes the last...
 
 void TreeWriter::ProcessParticles(vector<ExRootTreeBranch*> branchVector, vector<TObjArray*> arrayVector)
 {
   TIter iterator(arrayVector.at(0));
   TLorentzVector met4vect, momentum_tmp;
   Candidate *candidate = 0;
-  int lep_count=0, tau_count=0, W1_code=0, W2_code=0;
+  int lep_count=0, tau_count=0;
+  vector<int> W1_code, W2_code;
   vector<float> *lep_gen,*was_tau;
   vector<float> *met_gen,*met_phi_gen,*met_eta_gen;
   vector<float> *x_pt, *x_phi, *x_eta, *x_mass;
@@ -326,11 +331,11 @@ void TreeWriter::ProcessParticles(vector<ExRootTreeBranch*> branchVector, vector
     int PID_tmp = candidate->PID;
     if(PID_tmp == 24)
     {
-      W1_code = i;
+      W1_code.push_back(i);
     }
     if(PID_tmp == -24)
     {
-      W2_code = i;
+      W2_code.push_back(i);
     }
     i++;
   }
@@ -339,22 +344,23 @@ void TreeWriter::ProcessParticles(vector<ExRootTreeBranch*> branchVector, vector
   {
     int PID_tmp = TMath::Abs(candidate->PID);
     int M1 = candidate->M1 + 1;
-    int M2 = candidate->M2 + 1;
+    int D1 = candidate->D1 + 1;
+    int D2 = candidate->D2 + 1;
     if((PID_tmp == 16 || PID_tmp == 14 || PID_tmp == 12) && candidate->Status > 0 && candidate->IsPU == 0)
     {
       momentum_tmp = candidate->Momentum;
       met4vect += momentum_tmp;
     }
-    if((PID_tmp == 11 || PID_tmp == 13 || PID_tmp == 15) && (M1 == W1_code || M1 == W2_code))
+    if((PID_tmp == 11 || PID_tmp == 13 || PID_tmp == 15) && (M1 == W1_code.back() || M1 == W2_code.back()))
     {
       lep_count++;       
     }
-    if(PID_tmp == 15 && (M1 == W1_code || M1 == W2_code))
+    if(PID_tmp == 15 && (M1 == W1_code.back() || M1 == W2_code.back()))
     {
       tau_count++;
     }
-    //--- graviton gen infos, save the last gen particle with PID=39 (because it's the good one)
-    if(PID_tmp == 39 && candidate->D1 == W1_code && candidate->D2 == W2_code)
+    //--- graviton gen infos, find the right one linking it with thw 2 W
+    if(PID_tmp == 39 && ((D1 == W1_code.front() && D2 == W2_code.front()) || (D2 == W1_code.front() && D1 == W2_code.front()) ))
     {
       x_pt->at(0) = (candidate->Momentum).Pt();
       x_eta->at(0) = (candidate->Momentum).Eta();
@@ -371,6 +377,7 @@ void TreeWriter::ProcessParticles(vector<ExRootTreeBranch*> branchVector, vector
   met_phi_gen->push_back(momentum_tmp.Phi());
 }
 //------------------------------------------------------------------------------
+// Vertices
 
 void TreeWriter::ProcessVertices(vector<ExRootTreeBranch*> branchVector, vector<TObjArray*> arrayVector)
 {
@@ -404,6 +411,7 @@ void TreeWriter::ProcessVertices(vector<ExRootTreeBranch*> branchVector, vector<
 }
 
 //----------------------------------------------------------------------------------------
+// Photons
 
 void TreeWriter::ProcessPhotons(vector<ExRootTreeBranch*> branchVector, vector<TObjArray*> arrayVector)
 {
@@ -501,7 +509,7 @@ void TreeWriter::ProcessLeptons(vector<ExRootTreeBranch*> branchVector, vector<T
     iArray++;
   }
   nLep->push_back(number_lep);
-  cout << "leptons number:  " << number_lep << endl;   
+//  cout << "leptons number:  " << number_lep << endl;   
 }
 
 //------------------------------------------------------------------------------
