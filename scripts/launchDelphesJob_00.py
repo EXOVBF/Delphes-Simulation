@@ -16,12 +16,9 @@ def submitJob (jobID, queue, events, mqqCut, fileName, lheDir):
     jobname = 'jDel_'+queue+'_'+jobID+'.sh'
     f = open (jobname, 'w')
     f.write ('#!/bin/sh' + '\n\n')
+    f.write ('export SCRAM_ARCH=slc6_amd64_gcc472 \n')    
     f.write ('cmsStage -f /store/lhe/'+lheDir+'/'+fileName+'.lhe . \n\n')
-    f.write ('export SCRAM_ARCH=slc6_amd64_gcc472 \n')
-    f.write ('cd /afs/cern.ch/user/s/spigazzi/work/EXOVBF/CMSSW_6_2_0/src/ \n')
-    f.write ('eval `scramv1 runtime -sh` \n')
     f.write ('source /afs/cern.ch/user/s/spigazzi/work/EXOVBF/setup_slc6.sh \n')
-    f.write ('cd - \n\n')
     f.write ('/afs/cern.ch/user/s/spigazzi/work/EXOVBF/Delphes-Simulation/DelphesPythia8 /afs/cern.ch/user/s/spigazzi/work/EXOVBF/Delphes-Simulation/cards/delphes_card_CMS_PileUp.tcl '+ fileName+'.lhe' + ' ' + fileName+'_'+jobID+'.root' + ' ' + mqqCut + ' ' + str(startEvent) + ' ' + events + '\n\n')
     f.write ('cmsStage -f ' + fileName+'_'+jobID+'.root ' + '/store/user/govoni/Delphes/'+lheDir+'/')
     f.close ()
