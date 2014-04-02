@@ -8,12 +8,11 @@ DELPHES-SIMULATION:
 
   * Installation steps:
 ```
-  - cmsrel CMSSW_6_2_0
-  - cd CMSSW_6_2_0
-  - cmsenv
-  - cd -
   - source setup_slc6.sh
   - make -j 16 -B (-B to rebuild everythings from the scratch)
+
+  - NOTE: if you run the configure script, then you have to manually modify the Makefile,
+    line 44 and 49 --> add L$(LHAPDF) before -lLHAPDF.
 ```
 
   * Run Delphes with hepmc input and plain root output:
