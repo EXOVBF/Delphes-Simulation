@@ -4,7 +4,7 @@
 
 #include <signal.h>
 
-#include "Pythia8/Pythia.h"
+#include "Pythia.h"
 
 #include "TROOT.h"
 #include "TApplication.h"
