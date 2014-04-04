@@ -16,6 +16,7 @@ set ExecutionPath {
   MuonMomentumSmearing
 
   TrackMerger
+  Vertexing
   Calorimeter
   TrackPileUpSubtractor
   EFlowMerger
@@ -242,6 +243,17 @@ module Merger TrackMerger {
   add InputArray ElectronEnergySmearing/electrons
   add InputArray MuonMomentumSmearing/muons
   set OutputArray tracks
+}
+
+##############
+# Vertex Reco
+##############
+
+module Vertexing Vertexing {
+    set TrackInputArray TrackMerger/tracks
+    set VertexInputArray PileUpMerger/vertices
+    
+    set pt_min 0.1
 }
 
 #############
@@ -590,7 +602,7 @@ module Isolation ElectronIsolation {
 
   set DeltaRMax 0.3
 
-  set PTMin 0.5
+  set PTMin 0.1
 
   set PTRatioMax 0.1
 }
@@ -627,7 +639,7 @@ module Isolation MuonIsolation {
 
   set DeltaRMax 0.3
 
-  set PTMin 0.5
+  set PTMin 0.1
 
   set PTRatioMax 0.1
 }
@@ -768,7 +780,7 @@ module UniqueObjectFinder UniqueObjectFinder_CA8 {
 # add InputArray InputArray OutputArray
   add InputArray ElectronIsolation/electrons electrons
   add InputArray MuonIsolation/muons muons
-  add InputArray PhotonIsolation/photons photons  
+  add InputArray PhotonIsolation/photons photons
   add InputArray JetEnergyScale_CA8/jets jets_CA8
 }
 

@@ -105,6 +105,7 @@ void ParticlePropagator::Process()
   Double_t t_z, t_r, t_ra, t_rb;
   Double_t tmp, discr, discr2;
   Double_t delta, gammam, omega, asinrho;
+  int VertexID, VertexID_gen;
 
   const Double_t c_light = 2.99792458E8;
 
@@ -180,11 +181,9 @@ void ParticlePropagator::Process()
         switch(TMath::Abs(candidate->PID))
         {
           case 11:
-          cout << "electron" << endl;
             fElectronOutputArray->Add(candidate);
             break;
           case 13:
-          cout << "moun" << endl;
             fMuonOutputArray->Add(candidate);
             break;
           default:

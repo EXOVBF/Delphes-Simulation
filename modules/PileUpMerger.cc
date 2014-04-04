@@ -104,6 +104,7 @@ void PileUpMerger::Process()
   Long64_t allEntries, entry;
   Candidate *candidate, *vertexcandidate;
   DelphesFactory *factory;
+  int VertexID = 0;
 
   const Double_t c_light = 2.99792458E8;
 
@@ -119,6 +120,7 @@ void PileUpMerger::Process()
   while((candidate = static_cast<Candidate*>(fItInputArray->Next())))
   {
     candidate->Position.SetXYZT(x, y, z+dz, t+dt);
+    candidate->VertexID_gen = VertexID;
     fParticleOutputArray->Add(candidate);
   }
     
@@ -126,8 +128,10 @@ void PileUpMerger::Process()
 
   vertexcandidate = factory->NewCandidate();
   vertexcandidate->Position.SetXYZT(0.0, 0.0, dz, dt);
+  vertexcandidate->VertexID_gen = VertexID;
   fVertexOutputArray->Add(vertexcandidate);
 
+  VertexID++;
   // --- Then with pile-up vertices  ------
 
   switch(fPileUpDistribution)
@@ -167,9 +171,10 @@ void PileUpMerger::Process()
     vertexcandidate = factory->NewCandidate();
     vertexcandidate->Position.SetXYZT(0.0, 0.0, dz, dt);
     vertexcandidate->IsPU = 1;
+    vertexcandidate->VertexID_gen = VertexID;
 
     fVertexOutputArray->Add(vertexcandidate);
-
+    
     while(fReader->ReadParticle(pid, x, y, z, t, px, py, pz, e))
     {
       candidate = factory->NewCandidate();
@@ -183,6 +188,7 @@ void PileUpMerger::Process()
       candidate->Mass = pdgParticle ? pdgParticle->Mass() : -999.9;
 
       candidate->IsPU = 1;
+      candidate->VertexID_gen = VertexID;
 
       candidate->Momentum.SetPxPyPzE(px, py, pz, e);
       candidate->Momentum.RotateZ(dphi);
@@ -192,6 +198,7 @@ void PileUpMerger::Process()
 
       fParticleOutputArray->Add(candidate);
     }
+    VertexID++;
   }
 }
 

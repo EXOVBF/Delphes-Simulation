@@ -120,6 +120,8 @@ Candidate::Candidate() :
   ParticleInCone(0),
   P_in(0), 	//P before momentum smearing
   P_out(0), 	// P after momentum smearing
+  VertexID_gen(0),
+  sumPtSquare(0),
   PrunedMass(0),
   tau1(0),
   tau2(0),
@@ -225,6 +227,8 @@ void Candidate::Copy(TObject &obj) const
   object.P_in = P_in;
   object.P_out = P_out;
   object.Area = Area;
+  object.VertexID_gen = VertexID_gen;
+  object.sumPtSquare = sumPtSquare;  
 
   object.NCharged = NCharged;
   object.NNeutrals = NNeutrals;
@@ -270,6 +274,8 @@ void Candidate::Clear(Option_t* option)
   Charge = 0;
   Mass = 0.0;
   IsPU = 0;
+  VertexID_gen = 0;
+  sumPtSquare =0;
   IsConstituent = 0;
   BTag = 0;
   TauTag = 0;

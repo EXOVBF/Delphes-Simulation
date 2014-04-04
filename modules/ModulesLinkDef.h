@@ -37,6 +37,7 @@
 #include "modules/Cloner.h"
 #include "modules/Weighter.h"
 #include "modules/ExampleModule.h"
+#include "modules/Vertexing.h"
 
 #ifdef __CINT__
 
@@ -70,5 +71,6 @@
 #pragma link C++ class Cloner+;
 #pragma link C++ class Weighter+;
 #pragma link C++ class ExampleModule+;
+#pragma link C++ class Vertexing+;
 
 #endif

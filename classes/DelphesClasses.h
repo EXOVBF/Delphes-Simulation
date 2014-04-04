@@ -150,6 +150,8 @@ public:
   Float_t X; // vertex position (x component)
   Float_t Y; // vertex position (y component)
   Float_t Z; // vertex position (z component)
+  Int_t VertexID_gen;
+  Float_t sumPtSquare;
   Bool_t IsPU; //vertex is from pileup event
 
   ClassDef(Vertex, 1)
@@ -248,6 +250,8 @@ public:
   Float_t P_in;		//P before input smearing
   Float_t P_out;	//P after momentum smearing
 
+  Int_t VertexID_gen;
+
   TRef Particle; // reference to generated particle
 
   static CompBase *fgCompare; //!
@@ -278,6 +282,8 @@ public:
   Float_t P_in;		//P before input smearing
   Float_t P_out;	//P after momentum smearing
 
+  Int_t VertexID_gen;
+  
   TRef Particle; // reference to generated particle
 
   static CompBase *fgCompare; //!
@@ -369,6 +375,8 @@ public:
 
   TRef Particle; // reference to generated particle
 
+  Int_t VertexID_gen;
+
   static CompBase *fgCompare; //!
   const CompBase *GetCompare() const { return fgCompare; }
 
@@ -437,7 +445,7 @@ public:
   Float_t DeltaPhi;
 
   TLorentzVector Momentum, Position, Area;
-
+    
   // PileUpJetID variables
 
   Int_t    NCharged;
@@ -446,12 +454,14 @@ public:
   Float_t  BetaStar;
   Float_t  MeanSqDeltaR;
   Float_t  PTD;
-  Float_t  Isolation;
-  Float_t  ParticleInCone; 
+  Float_t  FracPt[5];
+  Float_t  Isolation;  
+  Float_t  ParticleInCone;   
   Float_t  P_in;
   Float_t  P_out;
-  Float_t  FracPt[5];
-  
+  Int_t VertexID_gen;
+  Float_t sumPtSquare;
+    
   Float_t PrunedMass;
   Float_t tau1;
   Float_t tau2;
