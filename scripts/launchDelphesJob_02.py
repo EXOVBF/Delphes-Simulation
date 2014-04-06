@@ -11,9 +11,10 @@ import argparse
 
 # ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----
 
-def submitJob (jobID, queue, events, mqqCut, fileName):
+def submitJob (jobID, offset, queue, events, mqqCut, fileName):
     startEvent = (int(jobID)*int(events))
-    jobname = 'jDel_'+queue+'_'+jobID+'.sh'
+    job_num = str(int(jobID)+int(offset))
+    jobname = 'jDel_'+queue+'_'+job_num+'.sh'
     f = open (jobname, 'w')
     f.write ('#!/bin/sh' + '\n\n')
     f.write ('cmsStage -f /store/user/rgerosa/DelphesAnalysis/kk_graviton_corrected/'+fileName+'.lhe . \n\n')
@@ -37,11 +38,11 @@ if __name__ == '__main__':
     parser.add_argument('-q', '--queue' , default = '8nh', help='batch queue (1nd)')
     parser.add_argument('-c', '--mqqCut' , default = '150', help='cut in mqq (150)')
     parser.add_argument('-n', '--events' , default = '10000', help='total number of events per job(10000)')
-    parser.add_argument('-o', '--offset' , default = 0, type=int, help='job numbering offset')
+    parser.add_argument('-o', '--offset' , default = '0', help='job numbering offset')
     
     args = parser.parse_args ()
 
     print 'submitting', args.jobsNum, 'jobs to queue', args.queue
     for i in range (0, int(args.jobsNum)):
-        submitJob (str (i+args.offset), args.queue, args.events, args.mqqCut, args.fileName)
+        submitJob (str (i), args.offset, args.queue, args.events, args.mqqCut, args.fileName)
         
