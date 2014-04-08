@@ -20,11 +20,11 @@ def submitJob (jobID, offset, queue, events, mqqCut, fileName):
     f.write ('cmsStage -f /store/user/rgerosa/DelphesAnalysis/kk_graviton_corrected/'+fileName+'.lhe . \n\n')
     f.write ('export SCRAM_ARCH=slc6_amd64_gcc472 \n')
     f.write ('source /afs/cern.ch/user/s/spigazzi/work/EXOVBF/setup_slc6.sh \n\n')
-    f.write ('/afs/cern.ch/user/s/spigazzi/work/EXOVBF/Delphes-Simulation/DelphesPythia8 /afs/cern.ch/user/s/spigazzi/work/EXOVBF/Delphes-Simulation/cards/delphes_card_CMS_PileUp_signal.tcl '+ fileName+'.lhe' + ' ' + fileName+'_'+jobID+'.root' + ' ' + mqqCut + ' ' + str(startEvent) + ' ' + events + '\n\n')
+    f.write ('/afs/cern.ch/user/s/spigazzi/work/EXOVBF/Delphes-Simulation/DelphesPythia8 /afs/cern.ch/user/s/spigazzi/work/EXOVBF/Delphes-Simulation/cards/delphes_card_CMS_PileUp.tcl '+ fileName+'.lhe' + ' ' + fileName+'_'+jobID+'.root' + ' ' + mqqCut + ' ' + str(startEvent) + ' ' + events + ' 1 \n\n')
     f.write ('cmsStage -f ' + fileName+'_'+jobID+'.root ' + '/store/user/govoni/Delphes/signal_lvj/')
     f.close ()
     getstatusoutput ('chmod 755 ' + jobname)
-    getstatusoutput ('bsub -q ' + queue + ' ' + '-u simone.pigazzini@cern.ch ' + jobname)
+#    getstatusoutput ('bsub -q ' + queue + ' ' + '-u simone.pigazzini@cern.ch ' + jobname)
 
 
 # ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ---- ----

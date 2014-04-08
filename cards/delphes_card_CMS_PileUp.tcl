@@ -46,6 +46,8 @@ set ExecutionPath {
 
   MissingET
 
+  BTagging_gen_ak5  
+  BTagging_gen_CA8
   BTagging_ak5  
   BTagging_CA8
 
@@ -673,6 +675,72 @@ module Merger ScalarHT {
 # b-tagging
 ###########
 
+module BTagging BTagging_gen_ak5 {
+  set PartonInputArray Delphes/partons
+  set JetInputArray GenJetFinder_ak5/jets 
+
+  set BitNumber 0
+
+  set DeltaR 0.5
+
+  set PartonPTMin 1.0
+
+  set PartonEtaMax 2.5
+
+  # add EfficiencyFormula {abs(PDG code)} {efficiency formula as a function of eta and pt}
+  # PDG code = the highest PDG code of a quark or gluon inside DeltaR cone around jet axis
+  # gluon's PDG code has the lowest priority
+
+  # https://twiki.cern.ch/twiki/bin/view/CMSPublic/PhysicsResultsBTV
+  # default efficiency formula (misidentification rate)
+  add EfficiencyFormula {0} {0.001}
+
+  # efficiency formula for c-jets (misidentification rate)
+  add EfficiencyFormula {4} {                                      (pt <= 15.0) * (0.000) + \
+                                                (abs(eta) <= 1.2) * (pt > 15.0) * (0.2*tanh(pt*0.03 - 0.4)) + \
+                              (abs(eta) > 1.2 && abs(eta) <= 2.5) * (pt > 15.0) * (0.1*tanh(pt*0.03 - 0.4)) + \
+                              (abs(eta) > 2.5)                                  * (0.000)}
+
+  # efficiency formula for b-jets
+  add EfficiencyFormula {5} {                                      (pt <= 15.0) * (0.000) + \
+                                                (abs(eta) <= 1.2) * (pt > 15.0) * (0.5*tanh(pt*0.03 - 0.4)) + \
+                              (abs(eta) > 1.2 && abs(eta) <= 2.5) * (pt > 15.0) * (0.4*tanh(pt*0.03 - 0.4)) + \
+                              (abs(eta) > 2.5)                                  * (0.000)}
+}
+
+module BTagging BTagging_gen_CA8 {
+  set PartonInputArray Delphes/partons
+  set JetInputArray GenJetFinder_CA8/jets
+
+  set BitNumber 0
+
+  set DeltaR 0.8
+
+  set PartonPTMin 1.0
+
+  set PartonEtaMax 2.5
+
+  # add EfficiencyFormula {abs(PDG code)} {efficiency formula as a function of eta and pt}
+  # PDG code = the highest PDG code of a quark or gluon inside DeltaR cone around jet axis
+  # gluon's PDG code has the lowest priority
+
+  # https://twiki.cern.ch/twiki/bin/view/CMSPublic/PhysicsResultsBTV
+  # default efficiency formula (misidentification rate)
+  add EfficiencyFormula {0} {0.001}
+
+  # efficiency formula for c-jets (misidentification rate)
+  add EfficiencyFormula {4} {                                      (pt <= 15.0) * (0.000) + \
+                                                (abs(eta) <= 1.2) * (pt > 15.0) * (0.2*tanh(pt*0.03 - 0.4)) + \
+                              (abs(eta) > 1.2 && abs(eta) <= 2.5) * (pt > 15.0) * (0.1*tanh(pt*0.03 - 0.4)) + \
+                              (abs(eta) > 2.5)                                  * (0.000)}
+
+  # efficiency formula for b-jets
+  add EfficiencyFormula {5} {                                      (pt <= 15.0) * (0.000) + \
+                                                (abs(eta) <= 1.2) * (pt > 15.0) * (0.5*tanh(pt*0.03 - 0.4)) + \
+                              (abs(eta) > 1.2 && abs(eta) <= 2.5) * (pt > 15.0) * (0.4*tanh(pt*0.03 - 0.4)) + \
+                              (abs(eta) > 2.5)                                  * (0.000)}
+}
+
 module BTagging BTagging_ak5 {
   set PartonInputArray Delphes/partons
   set JetInputArray JetEnergyScale_ak5/jets
@@ -739,29 +807,6 @@ module BTagging BTagging_CA8 {
                               (abs(eta) > 2.5)                                  * (0.000)}
 }
 
-###########
-# tau-tagging
-###########
-
-module TauTagging TauTagging {
-  set ParticleInputArray Delphes/allParticles
-  set PartonInputArray Delphes/partons
-  set JetInputArray JetEnergyScale/jets
-
-  set DeltaR 0.5
-
-  set TauPTMin 1.0
-
-  set TauEtaMax 2.5
-
-  # add EfficiencyFormula {abs(PDG code)} {efficiency formula as a function of eta and pt}
-
-  # default efficiency formula (misidentification rate)
-  add EfficiencyFormula {0} {0.001}
-  # efficiency formula for tau-jets
-  add EfficiencyFormula {15} {0.4}
-}
-
 #####################################################
 # Find uniquely identified photons/electrons/tau/jets
 #####################################################
@@ -792,7 +837,7 @@ module TreeWriter TreeWriter {
 #  add Branch InputArray BranchName BranchClass
   add Branch UniqueObjectFinder_ak5/electrons Electron Electron
   add Branch UniqueObjectFinder_ak5/muons Muon Muon
-  add Branch Delphes/allParticles Particle GenParticle 
+#  add Branch Delphes/allParticles Particle GenParticle 
   add Branch MissingET/momentum MissingET MissingET
   add Branch GenJetFinder_ak5/jets gen_jet_ak5 Jet
   add Branch UniqueObjectFinder_ak5/jets_ak5 jet_ak5 Jet
@@ -807,6 +852,5 @@ module TreeWriter TreeWriter {
 #  add Branch Calorimeter/eflowTracks EFlowTrack Track
 #  add Branch Calorimeter/eflowTowers EFlowTower Tower
 
-  set isSignal false;
 }
 

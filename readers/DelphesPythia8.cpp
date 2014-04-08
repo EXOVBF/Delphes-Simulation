@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 #include <signal.h>
 
@@ -28,19 +29,20 @@ using namespace std;
 
 //**************************************************************************************************
 
-bool lhe_event_preselection(vector< vector<float> >* LHE_event, float Mjj_cut)
+bool lhe_event_preselection(vector< vector<float> >* LHE_event, float Mjj_cut, vector<ExRootTreeBranch*> branchVector)
 {
     vector<TLorentzVector> outQuark;
     int leptons=0;
+    int Mjj_check=0;
     
     //--- search for final state quark in the event
     for(int iPart = 0; iPart < LHE_event->size(); iPart++)
     {
         vector<float> particle = LHE_event->at(iPart);
+        TLorentzVector tmp4vect;
+        tmp4vect.SetPxPyPzE(particle.at(6), particle.at(7), particle.at(8), particle.at(9));
         if(particle.at(1) == 1 && abs(particle.at(0)) > 0 && abs(particle.at(0)) < 7)
         {
-            TLorentzVector tmp4vect;
-            tmp4vect.SetPxPyPzE(particle.at(6), particle.at(7), particle.at(8), particle.at(9));
             outQuark.push_back(tmp4vect);
         }
         if(particle.at(1) == 1 && (abs(particle.at(0)) == 11 || abs(particle.at(0)) == 13 || abs(particle.at(0)) == 15))
@@ -53,11 +55,6 @@ bool lhe_event_preselection(vector< vector<float> >* LHE_event, float Mjj_cut)
     {
         return false;
     }
-    // keep events with 1 or 2 jets
-    if(outQuark.size() < 3)
-    {
-        return true;
-    }
     //--- apply the VBF preselection cut on Mjj
     for(int iQuark = 0; iQuark < outQuark.size(); iQuark++)
     {
@@ -67,11 +64,111 @@ bool lhe_event_preselection(vector< vector<float> >* LHE_event, float Mjj_cut)
             tmp4vect += outQuark.at(jQuark);
             if(tmp4vect.M() > Mjj_cut)
             {
-                return true;
+                Mjj_check = 1;
             }
         }
     }
-    return false;
+    if( outQuark.size() > 2 && Mjj_check == 0 )
+    {
+        return false;
+    }
+    //--- if preselection is passed save gen_lhe infos
+    vector<int> W_codes;
+    vector<float> *n_lep_gen;
+    vector<float> *lep_pt, *lep_eta, *lep_phi, *lep_flv;
+    vector<float> *nu_pt, *nu_eta, *nu_phi, *nu_flv;
+    vector<float> *q_pt, *q_eta, *q_phi, *q_flv, *q_fW;
+    vector<float> *W_pt, *W_phi, *W_eta, *W_m, *W_pid;
+    vector<float> *x_pt, *x_phi, *x_eta, *x_m;
+
+    n_lep_gen = (vector<float>*)((branchVector.at(0))->NewFloatEntry());  
+    lep_pt = (vector<float>*)((branchVector.at(1))->NewFloatEntry());
+    lep_eta = (vector<float>*)((branchVector.at(2))->NewFloatEntry());
+    lep_phi = (vector<float>*)((branchVector.at(3))->NewFloatEntry());
+    lep_flv = (vector<float>*)((branchVector.at(4))->NewFloatEntry());    
+    nu_pt = (vector<float>*)((branchVector.at(5))->NewFloatEntry());
+    nu_eta = (vector<float>*)((branchVector.at(6))->NewFloatEntry());
+    nu_phi = (vector<float>*)((branchVector.at(7))->NewFloatEntry());
+    nu_flv = (vector<float>*)((branchVector.at(8))->NewFloatEntry());
+    q_pt = (vector<float>*)((branchVector.at(9))->NewFloatEntry());
+    q_eta = (vector<float>*)((branchVector.at(10))->NewFloatEntry());
+    q_phi = (vector<float>*)((branchVector.at(11))->NewFloatEntry());
+    q_flv = (vector<float>*)((branchVector.at(12))->NewFloatEntry());
+    q_fW = (vector<float>*)((branchVector.at(13))->NewFloatEntry());
+    W_pt = (vector<float>*)((branchVector.at(14))->NewFloatEntry());
+    W_eta = (vector<float>*)((branchVector.at(15))->NewFloatEntry());
+    W_phi = (vector<float>*)((branchVector.at(16))->NewFloatEntry());
+    W_m = (vector<float>*)((branchVector.at(17))->NewFloatEntry());
+    W_pid = (vector<float>*)((branchVector.at(18))->NewFloatEntry());
+    if( branchVector.size() > 19 )
+    {
+        x_pt = (vector<float>*)((branchVector.at(19))->NewFloatEntry());
+        x_eta = (vector<float>*)((branchVector.at(20))->NewFloatEntry());
+        x_phi = (vector<float>*)((branchVector.at(21))->NewFloatEntry());
+        x_m = (vector<float>*)((branchVector.at(22))->NewFloatEntry());    
+    }
+    //---loop on lhe events particle searching for W's
+    for(int iPart = 0; iPart < LHE_event->size(); iPart++)
+    { 
+        vector<float> particle = LHE_event->at(iPart);
+        TLorentzVector tmp4vect;
+        tmp4vect.SetPxPyPzE(particle.at(6), particle.at(7), particle.at(8), particle.at(9));   
+        if(particle.at(1) == 2 && abs(particle.at(0)) == 24)
+        { 
+            W_pt->push_back(tmp4vect.Pt());
+            W_eta->push_back(tmp4vect.Eta());
+            W_phi->push_back(tmp4vect.Phi());
+            W_m->push_back(tmp4vect.M());
+            W_pid->push_back(particle.at(0));
+            W_codes.push_back(iPart+1);
+        }
+    }
+    //---loop on lhe events particle
+    for(int iPart = 0; iPart < LHE_event->size(); iPart++)
+    { 
+        vector<float> particle = LHE_event->at(iPart);
+        TLorentzVector tmp4vect;
+        tmp4vect.SetPxPyPzE(particle.at(6), particle.at(7), particle.at(8), particle.at(9));
+        if(branchVector.size() > 19 && particle.at(1) == 2 && abs(particle.at(0)) == 39)
+        {
+            x_pt->push_back(tmp4vect.Pt());
+            x_eta->push_back(tmp4vect.Eta());
+            x_phi->push_back(tmp4vect.Phi());
+            x_m->push_back(tmp4vect.M());
+        }
+        if(particle.at(1) == 1 && abs(particle.at(0)) > 0 && abs(particle.at(0)) < 7)
+        {
+            q_pt->push_back(tmp4vect.Pt());
+            q_eta->push_back(tmp4vect.Eta());
+            q_phi->push_back(tmp4vect.Phi());
+            q_flv->push_back(particle.at(0));
+            if( particle.at(2) == particle.at(3) && (particle.at(2) == W_codes.front() || particle.at(2) == W_codes.back()) )
+            {
+                q_fW->push_back(1);
+            }
+            else
+            {
+                q_fW->push_back(0);
+            }
+        }
+        if(particle.at(1) == 1 && (abs(particle.at(0)) == 11 || abs(particle.at(0)) == 13 || abs(particle.at(0)) == 15))
+        {
+            lep_pt->push_back(tmp4vect.Pt());
+            lep_eta->push_back(tmp4vect.Eta());
+            lep_phi->push_back(tmp4vect.Phi());
+            lep_flv->push_back(particle.at(0));
+        }
+        if(particle.at(1) == 1 && (abs(particle.at(0)) == 12 || abs(particle.at(0)) == 14 || abs(particle.at(0)) == 16))
+        {
+            nu_pt->push_back(tmp4vect.Pt());
+            nu_eta->push_back(tmp4vect.Eta());
+            nu_phi->push_back(tmp4vect.Phi());
+            nu_flv->push_back(particle.at(0));
+        }
+    }
+    n_lep_gen->push_back(leptons);
+    
+    return true;
 }
 
 //**************************************************************************************************
@@ -187,6 +284,7 @@ int main(int argc, char *argv[])
     ExRootTreeWriter *treeWriter = 0;
     ExRootTreeWriter *treeHepMC = 0;    
     ExRootTreeBranch *branchEvent = 0;
+    vector<ExRootTreeBranch*> branchGen;
     ExRootConfReader *confReader = 0;
     Delphes *modularDelphes = 0;
     DelphesFactory *factory = 0;
@@ -200,13 +298,14 @@ int main(int argc, char *argv[])
     if(argc < 4)
     {
         cout << "------------------------------------Manual----------------------------------------" << endl;
-        cout << "- Usage: " << appName << " config_file" << " lhe_file" << " output_file" << " Mjj_cut" << " start" << " number" << endl;
+        cout << "- Usage: " << appName << " config_file" << " lhe_file" << " output_file" << " Mjj_cut" << " start" << " number" << " signal" << endl;
         cout << "- config_file          ->  configuration file in Tcl format" << endl;
         cout << "- input_file           ->  lhe file for Pythia8" << endl;
         cout << "- output_file          ->  output file in ROOT format" << endl;
         cout << "- Mjj_cut  (optional)  ->  cut on Mjj in GeV -- default = 150 GeV" << endl;
         cout << "- start    (optional)  ->  number of starting event" << endl;
         cout << "- number   (optional)  ->  number of total events to be processed" << endl;
+        cout << "- signal   (optional)  ->  the sample is a graviton signal sample" << endl;
         cout << "----------------------------------------------------------------------------------" << endl << endl;  
         return 1;
     }
@@ -232,8 +331,47 @@ int main(int argc, char *argv[])
             message << "can't create output file " << argv[3];
             throw runtime_error(message.str());
         }
-
+        int fsignal=0;        
+        if( argc >= 8)
+        {
+            fsignal = 1;
+        }
+        //--- create output tree ---
         treeWriter = new ExRootTreeWriter(outputFile, "Delphes");
+        //--- create gen (lhe level) branch ---
+        //--- lep number
+        branchGen.push_back(treeWriter->NewFloatBranch("lhe_lep_number"));      
+        //--- leptons
+        branchGen.push_back(treeWriter->NewFloatBranch("lhe_lep_pt"));
+        branchGen.push_back(treeWriter->NewFloatBranch("lhe_lep_eta"));
+        branchGen.push_back(treeWriter->NewFloatBranch("lhe_lep_phi"));
+        branchGen.push_back(treeWriter->NewFloatBranch("lhe_lep_flv"));
+        //--- neutrinos
+        branchGen.push_back(treeWriter->NewFloatBranch("lhe_nu_pt"));
+        branchGen.push_back(treeWriter->NewFloatBranch("lhe_nu_eta"));
+        branchGen.push_back(treeWriter->NewFloatBranch("lhe_nu_phi"));
+        branchGen.push_back(treeWriter->NewFloatBranch("lhe_nu_flv"));
+        //--- gen quark infos
+        branchGen.push_back(treeWriter->NewFloatBranch("lhe_q_pt"));
+        branchGen.push_back(treeWriter->NewFloatBranch("lhe_q_eta"));
+        branchGen.push_back(treeWriter->NewFloatBranch("lhe_q_phi"));
+        branchGen.push_back(treeWriter->NewFloatBranch("lhe_q_flv"));
+        branchGen.push_back(treeWriter->NewFloatBranch("lhe_q_from_W"));
+        //--- gen W infos
+        branchGen.push_back(treeWriter->NewFloatBranch("lhe_W_pt"));
+        branchGen.push_back(treeWriter->NewFloatBranch("lhe_W_eta"));
+        branchGen.push_back(treeWriter->NewFloatBranch("lhe_W_phi"));
+        branchGen.push_back(treeWriter->NewFloatBranch("lhe_W_mass"));
+        branchGen.push_back(treeWriter->NewFloatBranch("lhe_W_pid"));
+        //--- gen Graviton infos
+        if(fsignal == 1)
+        {
+            branchGen.push_back(treeWriter->NewFloatBranch("lhe_X_pt"));
+            branchGen.push_back(treeWriter->NewFloatBranch("lhe_X_eta"));
+            branchGen.push_back(treeWriter->NewFloatBranch("lhe_X_phi"));
+            branchGen.push_back(treeWriter->NewFloatBranch("lhe_X_mass"));
+        }
+        
         //--- deals with the HepMc output of Pythia8 ---> no need to store it
         treeHepMC = new ExRootTreeWriter();
         branchEvent = treeHepMC->NewBranch("Event", HepMCEvent::Class());
@@ -348,7 +486,7 @@ int main(int argc, char *argv[])
                     LHE_event.push_back(LHE_particle);
                 }
                 //--- process only selected events
-                if(lhe_event_preselection(&LHE_event, Mjj_cut))
+                if(lhe_event_preselection(&LHE_event, Mjj_cut, branchGen))
                 {
                     if(!pythia->next())
                     {

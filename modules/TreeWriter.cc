@@ -124,10 +124,7 @@ void TreeWriter::Init()
         ExRootTreeBranch* branch_lep_6 = NewFloatBranch("lep_E_with_smearing");
         ExRootTreeBranch* branch_lep_7 = NewFloatBranch("lep_n_particle_cone");
         ExRootTreeBranch* branch_lep_8 = NewFloatBranch("lep_number");
-        ExRootTreeBranch* branch_lep_9 = NewFloatBranch("gen_lep_pt");
-        ExRootTreeBranch* branch_lep_10 = NewFloatBranch("gen_lep_eta");
-        ExRootTreeBranch* branch_lep_11 = NewFloatBranch("gen_lep_phi");
-        ExRootTreeBranch* branch_lep_12 = NewFloatBranch("lep_Z_vertex");
+        ExRootTreeBranch* branch_lep_9 = NewFloatBranch("lep_Z_vertex");
         branchVector[nFill].push_back(branch_lep_0);
         branchVector[nFill].push_back(branch_lep_1);
         branchVector[nFill].push_back(branch_lep_2);
@@ -138,9 +135,6 @@ void TreeWriter::Init()
         branchVector[nFill].push_back(branch_lep_7);
         branchVector[nFill].push_back(branch_lep_8);
         branchVector[nFill].push_back(branch_lep_9);
-        branchVector[nFill].push_back(branch_lep_10);
-        branchVector[nFill].push_back(branch_lep_11);
-        branchVector[nFill].push_back(branch_lep_12);
         arrayVector[nFill].push_back(array);
         methodVector[nFill] = itClassMap->second;
         filep=nFill;
@@ -513,8 +507,7 @@ void TreeWriter::ProcessLeptons(vector<ExRootTreeBranch*> branchVector, vector<T
   Candidate *gen_candidate = 0;
   int number_lep=0;
   unsigned int iArray=0;
-  vector<float> *pt, *eta, *phi, *flv, *iso, *Ein, *Eout, *nPartCone, *nLep;
-  vector<float> *pt_gen, *eta_gen, *phi_gen, *Z;
+  vector<float> *pt, *eta, *phi, *flv, *iso, *Ein, *Eout, *nPartCone, *nLep, *Z;
 
   pt = (vector<float>*)((branchVector.at(0))->NewFloatEntry());
   eta = (vector<float>*)((branchVector.at(1))->NewFloatEntry());
@@ -525,10 +518,7 @@ void TreeWriter::ProcessLeptons(vector<ExRootTreeBranch*> branchVector, vector<T
   Eout = (vector<float>*)((branchVector.at(6))->NewFloatEntry());
   nPartCone = (vector<float>*)((branchVector.at(7))->NewFloatEntry());
   nLep = (vector<float>*)((branchVector.at(8))->NewFloatEntry());
-  pt_gen = (vector<float>*)((branchVector.at(9))->NewFloatEntry());
-  eta_gen = (vector<float>*)((branchVector.at(10))->NewFloatEntry());
-  phi_gen = (vector<float>*)((branchVector.at(11))->NewFloatEntry());
-  Z = (vector<float>*)((branchVector.at(12))->NewFloatEntry());
+  Z = (vector<float>*)((branchVector.at(9))->NewFloatEntry());
   
   while(iArray < arrayVector.size())
   {
@@ -537,10 +527,10 @@ void TreeWriter::ProcessLeptons(vector<ExRootTreeBranch*> branchVector, vector<T
     iterator.Reset();
     while((candidate = static_cast<Candidate*>(iterator.Next())))
     {
-      //--- lep
       TLorentzVector momentum = candidate->Momentum;
       Double_t signPz = (momentum.Pz() >= 0.0) ? 1.0 : -1.0;
       Double_t cosTheta = TMath::Abs(momentum.CosTheta());
+
       pt->push_back(momentum.Pt());
       eta->push_back((cosTheta == 1.0 ? signPz*999.9 : momentum.Eta()));
       phi->push_back(momentum.Phi());
@@ -549,14 +539,7 @@ void TreeWriter::ProcessLeptons(vector<ExRootTreeBranch*> branchVector, vector<T
       Eout->push_back(candidate->P_out);
       nPartCone->push_back((candidate->ParticleInCone));
       flv->push_back(candidate->PID);
-      //--- gen lep
       gen_candidate = static_cast<Candidate*>(candidate->GetCandidates()->At(0));
-      momentum = gen_candidate->Momentum;
-      signPz = (momentum.Pz() >= 0.0) ? 1.0 : -1.0;
-      cosTheta = TMath::Abs(momentum.CosTheta());
-      pt_gen->push_back(momentum.Pt());
-      eta_gen->push_back((cosTheta == 1.0 ? signPz*999.9 : momentum.Eta()));
-      phi_gen->push_back(momentum.Phi());
       Z->push_back((gen_candidate->Position).Z());
       number_lep++;
     }
