@@ -130,7 +130,7 @@ void PileUpMerger::Process()
   factory = GetFactory();
 
   vertexcandidate = factory->NewCandidate();
-  vertexcandidate->Position.SetXYZT(0.0, 0.0, dz, dt);
+  vertexcandidate->Position.SetXYZT(dx, dy, dz, dt);
   vertexcandidate->VertexID_gen = VertexID;
   fVertexOutputArray->Add(vertexcandidate);
 

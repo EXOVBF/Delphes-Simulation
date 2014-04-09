@@ -458,9 +458,9 @@ void TreeWriter::ProcessVertices(vector<ExRootTreeBranch*> branchVector, vector<
     {
       PU_tmp = 0;
     }
-    X_tmp = X_tmp + position1.Z();
+    X_tmp = X_tmp + position1.X();
     X_tmp = X_tmp / n;
-    Y_tmp = Y_tmp + position1.Z();
+    Y_tmp = Y_tmp + position1.Y();
     Y_tmp = Y_tmp / n;
     Z_tmp = Z_tmp + position1.Z();
     Z_tmp = Z_tmp / n;
