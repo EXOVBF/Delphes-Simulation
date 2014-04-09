@@ -124,7 +124,9 @@ void TreeWriter::Init()
         ExRootTreeBranch* branch_lep_6 = NewFloatBranch("lep_E_with_smearing");
         ExRootTreeBranch* branch_lep_7 = NewFloatBranch("lep_n_particle_cone");
         ExRootTreeBranch* branch_lep_8 = NewFloatBranch("lep_number");
-        ExRootTreeBranch* branch_lep_9 = NewFloatBranch("lep_Z_vertex");
+        ExRootTreeBranch* branch_lep_9 = NewFloatBranch("lep_X_vertex");
+        ExRootTreeBranch* branch_lep_10 = NewFloatBranch("lep_Y_vertex");
+        ExRootTreeBranch* branch_lep_11 = NewFloatBranch("lep_Z_vertex");
         branchVector[nFill].push_back(branch_lep_0);
         branchVector[nFill].push_back(branch_lep_1);
         branchVector[nFill].push_back(branch_lep_2);
@@ -135,6 +137,8 @@ void TreeWriter::Init()
         branchVector[nFill].push_back(branch_lep_7);
         branchVector[nFill].push_back(branch_lep_8);
         branchVector[nFill].push_back(branch_lep_9);
+        branchVector[nFill].push_back(branch_lep_10);
+        branchVector[nFill].push_back(branch_lep_11);
         arrayVector[nFill].push_back(array);
         methodVector[nFill] = itClassMap->second;
         filep=nFill;
@@ -241,11 +245,15 @@ void TreeWriter::Init()
     if(strcmp(branchName.Data(),"Vertex")==0)
     {
       ExRootTreeBranch* branchRecoN = NewFloatBranch("nPV");
+      ExRootTreeBranch* branchRecoX = NewFloatBranch("vertex_X");
+      ExRootTreeBranch* branchRecoY = NewFloatBranch("vertex_Y");
       ExRootTreeBranch* branchRecoZ = NewFloatBranch("vertex_Z");
       ExRootTreeBranch* branchRecoS = NewFloatBranch("sum_pt_square");
       ExRootTreeBranch* branchGenN = NewFloatBranch("gen_nPV");
       ExRootTreeBranch* branchGenPU = NewFloatBranch("gen_is_PU");
       branchVector[nFill].push_back(branchRecoN);
+      branchVector[nFill].push_back(branchRecoX);
+      branchVector[nFill].push_back(branchRecoY);
       branchVector[nFill].push_back(branchRecoZ);
       branchVector[nFill].push_back(branchRecoS);
       branchVector[nFill].push_back(branchGenN);
@@ -395,16 +403,18 @@ void TreeWriter::ProcessVertices(vector<ExRootTreeBranch*> branchVector, vector<
   TIter iterator2(arrayVector.at(0));
   Candidate *candidate1=0;
   Candidate *candidate2=0;
-  vector<float> *nPV, *Z, *S, *gen_nPV, *gen_PU;
+  vector<float> *nPV, *X, *Y, *Z, *S, *gen_nPV, *gen_PU;
   vector<int> skip;
   int vertexR=0,i=0;
-  float Z_tmp, S_tmp, PU_tmp;
+  float X_tmp, Y_tmp, Z_tmp, S_tmp, PU_tmp;
 
   nPV = (vector<float>*)((branchVector.at(0))->NewFloatEntry());
-  Z = (vector<float>*)((branchVector.at(1))->NewFloatEntry());
-  S = (vector<float>*)((branchVector.at(2))->NewFloatEntry());
-  gen_nPV = (vector<float>*)((branchVector.at(3))->NewFloatEntry());
-  gen_PU = (vector<float>*)((branchVector.at(4))->NewFloatEntry());  
+  X = (vector<float>*)((branchVector.at(1))->NewFloatEntry());
+  Y = (vector<float>*)((branchVector.at(2))->NewFloatEntry());
+  Z = (vector<float>*)((branchVector.at(3))->NewFloatEntry());
+  S = (vector<float>*)((branchVector.at(4))->NewFloatEntry());
+  gen_nPV = (vector<float>*)((branchVector.at(5))->NewFloatEntry());
+  gen_PU = (vector<float>*)((branchVector.at(6))->NewFloatEntry());  
 
   // loop over all vertices
   // -> vertex closer then 100 mircon in the z direction are considered unresolved
@@ -413,6 +423,8 @@ void TreeWriter::ProcessVertices(vector<ExRootTreeBranch*> branchVector, vector<
   {
     i++;
     PU_tmp = 1;
+    X_tmp = 0;
+    Y_tmp = 0;    
     Z_tmp = 0;
     S_tmp = 0;
     int j=0;
@@ -432,7 +444,9 @@ void TreeWriter::ProcessVertices(vector<ExRootTreeBranch*> branchVector, vector<
         if(candidate2->IsPU == 0)
         {
           PU_tmp = 0;
-        }   
+        }
+        X_tmp = X_tmp + position2.X();
+        Y_tmp = Y_tmp + position2.Y();   
         Z_tmp = Z_tmp + position2.Z();
         S_tmp = S_tmp + candidate2->sumPtSquare;
         skip.push_back(j);
@@ -444,9 +458,15 @@ void TreeWriter::ProcessVertices(vector<ExRootTreeBranch*> branchVector, vector<
     {
       PU_tmp = 0;
     }
+    X_tmp = X_tmp + position1.Z();
+    X_tmp = X_tmp / n;
+    Y_tmp = Y_tmp + position1.Z();
+    Y_tmp = Y_tmp / n;
     Z_tmp = Z_tmp + position1.Z();
     Z_tmp = Z_tmp / n;
     S_tmp = S_tmp + candidate1->sumPtSquare;
+    X->push_back(X_tmp);
+    Y->push_back(Y_tmp);
     Z->push_back(Z_tmp);
     S->push_back(S_tmp);
     gen_PU->push_back(PU_tmp);
@@ -507,7 +527,8 @@ void TreeWriter::ProcessLeptons(vector<ExRootTreeBranch*> branchVector, vector<T
   Candidate *gen_candidate = 0;
   int number_lep=0;
   unsigned int iArray=0;
-  vector<float> *pt, *eta, *phi, *flv, *iso, *Ein, *Eout, *nPartCone, *nLep, *Z;
+  vector<float> *pt, *eta, *phi, *flv, *iso, *Ein, *Eout, *nPartCone, *nLep; 
+  vector<float> *X, *Y, *Z;
 
   pt = (vector<float>*)((branchVector.at(0))->NewFloatEntry());
   eta = (vector<float>*)((branchVector.at(1))->NewFloatEntry());
@@ -518,7 +539,9 @@ void TreeWriter::ProcessLeptons(vector<ExRootTreeBranch*> branchVector, vector<T
   Eout = (vector<float>*)((branchVector.at(6))->NewFloatEntry());
   nPartCone = (vector<float>*)((branchVector.at(7))->NewFloatEntry());
   nLep = (vector<float>*)((branchVector.at(8))->NewFloatEntry());
-  Z = (vector<float>*)((branchVector.at(9))->NewFloatEntry());
+  X = (vector<float>*)((branchVector.at(9))->NewFloatEntry());
+  Y = (vector<float>*)((branchVector.at(10))->NewFloatEntry());
+  Z = (vector<float>*)((branchVector.at(11))->NewFloatEntry());
   
   while(iArray < arrayVector.size())
   {
@@ -540,6 +563,8 @@ void TreeWriter::ProcessLeptons(vector<ExRootTreeBranch*> branchVector, vector<T
       nPartCone->push_back((candidate->ParticleInCone));
       flv->push_back(candidate->PID);
       gen_candidate = static_cast<Candidate*>(candidate->GetCandidates()->At(0));
+      X->push_back((gen_candidate->Position).X());
+      Y->push_back((gen_candidate->Position).Y());
       Z->push_back((gen_candidate->Position).Z());
       number_lep++;
     }
