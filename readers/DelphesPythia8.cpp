@@ -305,7 +305,7 @@ int main(int argc, char *argv[])
         cout << "- Mjj_cut  (optional)  ->  cut on Mjj in GeV -- default = 150 GeV" << endl;
         cout << "- start    (optional)  ->  number of starting event" << endl;
         cout << "- number   (optional)  ->  number of total events to be processed" << endl;
-        cout << "- signal   (optional)  ->  the sample is a graviton signal sample" << endl;
+        cout << "- signal   (optional)  ->  1 if the sample is a graviton signal sample" << endl;
         cout << "----------------------------------------------------------------------------------" << endl << endl;  
         return 1;
     }
@@ -334,7 +334,7 @@ int main(int argc, char *argv[])
         int fsignal=0;        
         if( argc >= 8)
         {
-            fsignal = 1;
+            fsignal = atoi(argv[7]);
         }
         //--- create output tree ---
         treeWriter = new ExRootTreeWriter(outputFile, "Delphes");
