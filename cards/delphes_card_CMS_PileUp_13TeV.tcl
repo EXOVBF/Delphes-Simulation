@@ -68,7 +68,7 @@ module PileUpMerger PileUpMerger {
   set VertexOutputArray vertices
 
   # pre-generated minbias input file
-  set PileUpFile /afs/cern.ch/work/s/spigazzi/public/MinBias_8TeV_1M.pileup
+  set PileUpFile /afs/cern.ch/work/s/spigazzi/public/MinBias_13TeV_1M.pileup
 
   # average expected pile up 20 for LHC-8TeV
   set MeanPileUp 20	
