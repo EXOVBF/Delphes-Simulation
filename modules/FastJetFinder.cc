@@ -268,7 +268,7 @@ void FastJetFinder::Process()
     candidate = factory->NewCandidate();
 
   	if(fComputePruning)
- 	  {
+ 	{
  			fPruner = new Pruner(*fDefinition4Pruner, 0.1, fParameterR);
  			PseudoJet PrunedJet = fPruner->result(*itOutputList);
  			candidate->PrunedMass = PrunedJet.m(); 
