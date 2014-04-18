@@ -353,15 +353,13 @@ void FastJetFinder::Process()
           axisMode = Njettiness::onepass_kt_axes;
           break;
       }
-
-      Njettiness::MeasureMode measureMode = Njettiness::unnormalized_measure;
-
-      Nsubjettiness nSub1(1, axisMode, measureMode, fBeta);
-      Nsubjettiness nSub2(2, axisMode, measureMode, fBeta);
-      Nsubjettiness nSub3(3, axisMode, measureMode, fBeta);
-      Nsubjettiness nSub4(4, axisMode, measureMode, fBeta);
-      Nsubjettiness nSub5(5, axisMode, measureMode, fBeta);
-
+      
+      //--- mod
+      Nsubjettiness nSub1(1, axisMode, 1.0, fParameterR, fParameterR);
+      Nsubjettiness nSub2(2, axisMode, 1.0, fParameterR, fParameterR);
+      Nsubjettiness nSub3(3, axisMode, 1.0, fParameterR, fParameterR);
+      Nsubjettiness nSub4(4, axisMode, 1.0, fParameterR, fParameterR);
+      Nsubjettiness nSub5(5, axisMode, 1.0, fParameterR, fParameterR);
       candidate->Tau[0] = nSub1(*itOutputList);
       candidate->Tau[1] = nSub2(*itOutputList);
       candidate->Tau[2] = nSub3(*itOutputList);

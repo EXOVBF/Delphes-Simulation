@@ -429,6 +429,7 @@ module FastJetFinder GenJetFinder_CA8 {
   set JetPTMin 10.0
   set ComputePrunedMass true;
   set ComputeNsubjettiness true;
+  set AxisMode 4;
 }
 
 ############
@@ -468,6 +469,7 @@ module FastJetFinder FastJetFinder_CA8 {
   set JetPTMin 10.0
   set ComputePrunedMass true;
   set ComputeNsubjettiness true;
+  set AxisMode 4;
 }
 
 ###########################
