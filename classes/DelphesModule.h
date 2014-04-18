@@ -41,7 +41,7 @@ public:
   TObjArray *ExportArray(const char *name);
 
   ExRootTreeBranch *NewBranch(const char *name, TClass *cl);
-  ExRootTreeBranch *NewFloatBranch(const char *name);  
+  ExRootTreeBranch *NewFloatBranch(const char *name); // mod  
 
   ExRootResult *GetPlots();
   DelphesFactory *GetFactory();

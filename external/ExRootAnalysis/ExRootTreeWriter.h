@@ -34,12 +34,12 @@ public:
   void SetTreeName(const char *name) { fTreeName = name; }
 
   ExRootTreeBranch *NewBranch(const char *name, TClass *cl);
-  ExRootTreeBranch *NewFloatBranch(const char *name);
-
+  ExRootTreeBranch *NewFloatBranch(const char *name); // mod
+  
   void Clear();
   void Fill();
   void Write();
-  
+
 private:
 
   TTree *NewTree();

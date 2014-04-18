@@ -25,7 +25,7 @@
 
 using namespace std;
 
-//------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
 
 ExRootTreeWriter::ExRootTreeWriter(TFile *file, const char *treeName) :
   fFile(file), fTree(0), fTreeName(treeName)

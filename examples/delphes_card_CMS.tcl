@@ -28,15 +28,13 @@ set ExecutionPath {
 
   MissingET
 
-  GenJetFinder_ak5
-  GenJetFinder_CA8
-  FastJetFinder_ak5
-  FastJetFinder_CA8
+  GenJetFinder
+  FastJetFinder
 
-  JetEnergyScale_ak5
-  JetEnergyScale_CA8
+  JetEnergyScale
 
   BTagging
+  TauTagging
 
   UniqueObjectFinder
 
@@ -213,7 +211,8 @@ module Calorimeter Calorimeter {
   set PhotonOutputArray photons
 
   set EFlowTrackOutputArray eflowTracks
-  set EFlowTowerOutputArray eflowTowers
+  set EFlowPhotonOutputArray eflowPhotons
+  set EFlowNeutralHadronOutputArray eflowNeutralHadrons
 
   set pi [expr {acos(-1)}]
 
@@ -284,7 +283,8 @@ module Calorimeter Calorimeter {
 module Merger EFlowMerger {
 # add InputArray InputArray
   add InputArray Calorimeter/eflowTracks
-  add InputArray Calorimeter/eflowTowers
+  add InputArray Calorimeter/eflowPhotons
+  add InputArray Calorimeter/eflowNeutralHadrons
   set OutputArray eflow
 }
 
@@ -293,7 +293,7 @@ module Merger EFlowMerger {
 ###################
 
 module Efficiency PhotonEfficiency {
-  set InputArray Calorimeter/photons
+  set InputArray Calorimeter/eflowPhotons
   set OutputArray photons
 
   # set EfficiencyFormula {efficiency formula as a function of eta and pt}
@@ -398,8 +398,7 @@ module Isolation MuonIsolation {
 
 module Merger MissingET {
 # add InputArray InputArray
-  add InputArray Calorimeter/eflowTracks
-  add InputArray Calorimeter/eflowTowers
+  add InputArray EFlowMerger/eflow
   set MomentumOutputArray momentum
 }
 
@@ -409,8 +408,7 @@ module Merger MissingET {
 
 module Merger ScalarHT {
 # add InputArray InputArray
-  add InputArray UniqueObjectFinder/jets_ak5
-  add InputArray UniqueObjectFinder/jets_CA8
+  add InputArray UniqueObjectFinder/jets
   add InputArray UniqueObjectFinder/electrons
   add InputArray UniqueObjectFinder/photons
   add InputArray UniqueObjectFinder/muons
@@ -421,7 +419,7 @@ module Merger ScalarHT {
 # MC truth jet finder
 #####################
 
-module FastJetFinder GenJetFinder_ak5 {
+module FastJetFinder GenJetFinder {
   set InputArray Delphes/stableParticles
 
   set OutputArray jets
@@ -430,26 +428,14 @@ module FastJetFinder GenJetFinder_ak5 {
   set JetAlgorithm 6
   set ParameterR 0.5
 
-  set JetPTMin 30.0
-}
-
-module FastJetFinder GenJetFinder_CA8 {
-  set InputArray Delphes/stableParticles
-
-  set OutputArray jets
-
-  # algorithm: 1 CDFJetClu, 2 MidPoint, 3 SIScone, 4 kt, 5 Cambridge/Aachen, 6 antikt
-  set JetAlgorithm 5
-  set ParameterR 0.8
-
-  set JetPTMin 30.0
+  set JetPTMin 20.0
 }
 
 ############
 # Jet finder
 ############
 
-module FastJetFinder FastJetFinder_ak5 {
+module FastJetFinder FastJetFinder {
 #  set InputArray Calorimeter/towers
   set InputArray EFlowMerger/eflow
 
@@ -459,41 +445,19 @@ module FastJetFinder FastJetFinder_ak5 {
   set JetAlgorithm 6
   set ParameterR 0.5
 
-  set JetPTMin 30.0
-}
-
-module FastJetFinder FastJetFinder_CA8 {
-#  set InputArray Calorimeter/towers
-  set InputArray EFlowMerger/eflow
-
-  set OutputArray jets
-
-  # algorithm: 1 CDFJetClu, 2 MidPoint, 3 SIScone, 4 kt, 5 Cambridge/Aachen, 6 antikt
-  set JetAlgorithm 5
-  set ParameterR 0.8
-
-  set JetPTMin 30.0
+  set JetPTMin 20.0
 }
 
 ##################
 # Jet Energy Scale
 ##################
 
-module EnergyScale JetEnergyScale_ak5 {
-  set InputArray FastJetFinder_ak5/jets
+module EnergyScale JetEnergyScale {
+  set InputArray FastJetFinder/jets
   set OutputArray jets
 
  # scale formula for jets
-  set ScaleFormula {1.08}
-}
-
-
-module EnergyScale JetEnergyScale_CA8 {
-  set InputArray FastJetFinder_CA8/jets
-  set OutputArray jets
-
- # scale formula for jets
-  set ScaleFormula {1.08}
+  set ScaleFormula {1.00}
 }
 
 ###########
@@ -502,7 +466,7 @@ module EnergyScale JetEnergyScale_CA8 {
 
 module BTagging BTagging {
   set PartonInputArray Delphes/partons
-  set JetInputArray JetEnergyScale_ak5/jets
+  set JetInputArray JetEnergyScale/jets
 
   set BitNumber 0
 
@@ -562,28 +526,33 @@ module UniqueObjectFinder UniqueObjectFinder {
   add InputArray PhotonIsolation/photons photons
   add InputArray ElectronIsolation/electrons electrons
   add InputArray MuonIsolation/muons muons
-  add InputArray JetEnergyScale_ak5/jets jets_ak5
-  add InputArray JetEnergyScale_CA8/jets jets_CA8  
+  add InputArray JetEnergyScale/jets jets
 }
 
 ##################
 # ROOT tree writer
 ##################
 
+# tracks, towers and eflow objects are not stored by default in the output.
+# if needed (for jet constituent or other studies), uncomment the relevant
+# "add Branch ..." lines.
+
 module TreeWriter TreeWriter {
 # add Branch InputArray BranchName BranchClass
   add Branch Delphes/allParticles Particle GenParticle
+
   add Branch TrackMerger/tracks Track Track
   add Branch Calorimeter/towers Tower Tower
+
   add Branch Calorimeter/eflowTracks EFlowTrack Track
-  add Branch Calorimeter/eflowTowers EFlowTower Tower
-  add Branch GenJetFinder_ak5/jets GenJet_ak5 Jet
-  add Branch GenJetFinder_CA8/jets GenJet_CA8 Jet
-  add Branch FastJetFinder_ak5/jets Jet_ak5 Jet
-  add Branch FastJetFinder_CA8/jets Jet_CA8 Jet 
-  add Branch ElectronIsolation/electrons Electron Electron
+  add Branch Calorimeter/eflowPhotons EFlowPhoton Tower
+  add Branch Calorimeter/eflowNeutralHadrons EFlowNeutralHadron Tower
+
+  add Branch GenJetFinder/jets GenJet Jet
+  add Branch UniqueObjectFinder/jets Jet Jet
+  add Branch UniqueObjectFinder/electrons Electron Electron
   add Branch UniqueObjectFinder/photons Photon Photon
-  add Branch MuonIsolation/muons Muon Muon
+  add Branch UniqueObjectFinder/muons Muon Muon
   add Branch MissingET/momentum MissingET MissingET
   add Branch ScalarHT/energy ScalarHT ScalarHT
 }

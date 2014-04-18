@@ -626,9 +626,9 @@ void TreeWriter::ProcessJets(vector<ExRootTreeBranch*> branchVector, vector<TObj
     //--- only for CA8 jets
     if(branchVector.size()==11)
     {
-      tau1->push_back(candidate->tau1);
-      tau2->push_back(candidate->tau2);
-      tau3->push_back(candidate->tau3);
+      tau1->push_back(candidate->Tau[0]);
+      tau2->push_back(candidate->Tau[1]);
+      tau3->push_back(candidate->Tau[2]);
     }
     jets_count++;
   }

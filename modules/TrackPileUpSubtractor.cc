@@ -109,10 +109,10 @@ void TrackPileUpSubtractor::Process()
   fItVertexInputArray->Reset();
   while((candidate = static_cast<Candidate*>(fItVertexInputArray->Next())))
   {
-    if(candidate->IsPU == 0)
+    if(!candidate->IsPU)
     {
     zvtx = candidate->Position.Z();
-    break;
+    // break;
     }
   }
 
@@ -121,6 +121,7 @@ void TrackPileUpSubtractor::Process()
   {
     iterator = itInputMap->first;
     array = itInputMap->second;
+
     // loop over all candidates
     iterator->Reset();
     while((candidate = static_cast<Candidate*>(iterator->Next())))

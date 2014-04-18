@@ -19,6 +19,7 @@ set ExecutionPath {
   Vertexing
   Calorimeter
   TrackPileUpSubtractor
+  NeutralTowerMerger
   EFlowMerger
 
   GenJetFinder_ak5
@@ -31,7 +32,6 @@ set ExecutionPath {
   PileUpJetID_CA8
   JetPileUpSubtractor_ak5
   JetPileUpSubtractor_CA8
-
   JetEnergyScale_ak5
   JetEnergyScale_CA8
 
@@ -224,15 +224,15 @@ module MomentumSmearing MuonMomentumSmearing {
   set ResolutionFormula {                  (abs(eta) <= 0.5) * (pt > 0.1   && pt <= 5.0)   * (0.02) + \
                                            (abs(eta) <= 0.5) * (pt > 5.0   && pt <= 1.0e2) * (0.015) + \
                                            (abs(eta) <= 0.5) * (pt > 1.0e2 && pt <= 2.0e2) * (0.03) + \
-                                           (abs(eta) <= 0.5) * (pt > 2.0e2)                * (0.05 + pt*1.e-4) + \
+                                           (abs(eta) <= 0.5) * (pt > 2.0e2)                * (0.05) + \
                          (abs(eta) > 0.5 && abs(eta) <= 1.5) * (pt > 0.1   && pt <= 5.0)   * (0.03) + \
                          (abs(eta) > 0.5 && abs(eta) <= 1.5) * (pt > 5.0   && pt <= 1.0e2) * (0.02) + \
                          (abs(eta) > 0.5 && abs(eta) <= 1.5) * (pt > 1.0e2 && pt <= 2.0e2) * (0.04) + \
-                         (abs(eta) > 0.5 && abs(eta) <= 1.5) * (pt > 2.0e2)                * (0.05 + pt*1.e-4) + \
+                         (abs(eta) > 0.5 && abs(eta) <= 1.5) * (pt > 2.0e2)                * (0.05) + \
                          (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 0.1   && pt <= 5.0)   * (0.04) + \
                          (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 5.0   && pt <= 1.0e2) * (0.035) + \
                          (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 1.0e2 && pt <= 2.0e2) * (0.05) + \
-                         (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 2.0e2)                * (0.05 + pt*1.e-4)}
+                         (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 2.0e2)                * (0.05)}
 }
 
 ##############
@@ -270,7 +270,8 @@ module Calorimeter Calorimeter {
   set PhotonOutputArray photons
 
   set EFlowTrackOutputArray eflowTracks
-  set EFlowTowerOutputArray eflowTowers
+  set EFlowPhotonOutputArray eflowPhotons
+  set EFlowNeutralHadronOutputArray eflowNeutralHadrons
 
   set pi [expr {acos(-1)}]
 
@@ -307,11 +308,10 @@ module Calorimeter Calorimeter {
 
   # default energy fractions {abs(PDG code)} {Fecal Fhcal}
   add EnergyFraction {0} {0.0 1.0}
-  # energy fractions for e, gamma 
+  # energy fractions for e, gamma and pi0
   add EnergyFraction {11} {1.0 0.0}
   add EnergyFraction {22} {1.0 0.0}
   add EnergyFraction {111} {1.0 0.0}
-  # energy fractions pi0 pi
   # energy fractions for muon, neutrinos and neutralinos
   add EnergyFraction {12} {0.0 0.0}
   add EnergyFraction {13} {0.0 0.0}
@@ -352,13 +352,25 @@ module TrackPileUpSubtractor TrackPileUpSubtractor {
 }
 
 ####################
+# Neutral tower merger
+####################
+
+module Merger NeutralTowerMerger {
+# add InputArray InputArray
+  add InputArray Calorimeter/eflowPhotons
+  add InputArray Calorimeter/eflowNeutralHadrons
+  set OutputArray eflowTowers
+}
+
+####################
 # Energy flow merger
 ####################
 
 module Merger EFlowMerger {
 # add InputArray InputArray
   add InputArray TrackPileUpSubtractor/eflowTracks
-  add InputArray Calorimeter/eflowTowers
+  add InputArray Calorimeter/eflowPhotons
+  add InputArray Calorimeter/eflowNeutralHadrons
   set OutputArray eflow
 }
 
@@ -652,8 +664,7 @@ module Isolation MuonIsolation {
 
 module Merger MissingET {
 # add InputArray InputArray
-  add InputArray Calorimeter/eflowTracks
-  add InputArray Calorimeter/eflowTowers
+  add InputArray EFlowMerger/eflow
   set MomentumOutputArray momentum
 }
 

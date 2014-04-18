@@ -106,7 +106,6 @@ public:
   Int_t Status; // particle status | hepevt.isthep[number]
   Int_t IsPU; // 0 or 1 for particles from pile-up interactions
 
-
   Int_t M1; // particle 1st mother | hepevt.jmohep[number][0] - 1
   Int_t M2; // particle 2nd mother | hepevt.jmohep[number][1] - 1
 
@@ -150,10 +149,10 @@ public:
   Float_t X; // vertex position (x component)
   Float_t Y; // vertex position (y component)
   Float_t Z; // vertex position (z component)
-  Int_t VertexID_gen;
-  Float_t sumPtSquare;
-  Bool_t IsPU; //vertex is from pileup event
-
+  //---mod
+  Int_t VertexID_gen; // Identification Number of generated vertex
+  Float_t sumPtSquare; // sum pt^2 of all the tracks from the vertex
+  
   ClassDef(Vertex, 1)
 };
 
@@ -218,6 +217,13 @@ public:
 
   Float_t EhadOverEem; // ratio of the hadronic versus electromagnetic energy deposited in the calorimeter
 
+  //---mod
+  Float_t Isolation; // Pt_sum/Pt_candidate in a cone around the electron candidate
+  Float_t ParticleInCone;  //number of particle in a cone around the candidate photon;
+  Float_t P_in;		//P before input smearing
+  Float_t P_out;	//P after momentum smearing
+  Int_t VertexID_gen;
+
   TRefArray Particles; // references to generated particles
 
   static CompBase *fgCompare; //!
@@ -244,14 +250,13 @@ public:
 
   Float_t EhadOverEem; // ratio of the hadronic versus electromagnetic energy deposited in the calorimeter
   
+  //---mod
   Float_t Isolation; // Pt_sum/Pt_candidate in a cone around the electron candidate
   Float_t ParticleInCone;  //number of particle in a cone around the candidate electron;
-  
   Float_t P_in;		//P before input smearing
   Float_t P_out;	//P after momentum smearing
-
   Int_t VertexID_gen;
-
+  
   TRef Particle; // reference to generated particle
 
   static CompBase *fgCompare; //!
@@ -275,15 +280,14 @@ public:
   Float_t T; //particle arrival time of flight
 
   Int_t Charge; // muon charge
-  
-  Float_t Isolation; // Pt_sum/Pt_candidate in a cone around the muon candidate
-  Float_t ParticleInCone;  //number of particle in a cone around the candidate electron;
-  
+
+  //---mod
+  Float_t Isolation; // Pt_sum/Pt_candidate in a cone around the electron candidate
+  Float_t ParticleInCone;  //number of particle in a cone around the candidate muon;
   Float_t P_in;		//P before input smearing
   Float_t P_out;	//P after momentum smearing
-
   Int_t VertexID_gen;
-  
+
   TRef Particle; // reference to generated particle
 
   static CompBase *fgCompare; //!
@@ -318,6 +322,23 @@ public:
 
   Float_t EhadOverEem; // ratio of the hadronic versus electromagnetic energy deposited in the calorimeter
 
+  Int_t    NCharged; // number of charged constituents 
+  Int_t    NNeutrals; // number of neutral constituents 
+  Float_t  Beta; // (sum pt of charged pile-up constituents)/(sum pt of charged constituents) 
+  Float_t  BetaStar; // (sum pt of charged constituents coming from hard interaction)/(sum pt of charged constituents) 
+  Float_t  MeanSqDeltaR; // average distance (squared) between constituent and jet weighted by pt (squared) of constituent
+  Float_t  PTD; // average pt between constituent and jet weighted by pt of constituent
+  Float_t  FracPt[5]; // (sum pt of constituents within a ring 0.1*i < DeltaR < 0.1*(i+1))/(sum pt of constituents) 
+
+  Float_t Tau1; // 1-subjettiness
+  Float_t Tau2; // 2-subjettiness
+  Float_t Tau3; // 3-subjettiness
+  Float_t Tau4; // 4-subjettiness
+  Float_t Tau5; // 5-subjettiness
+
+  //---mod
+  Float_t PrunedMass;
+
   TRefArray Constituents; // references to constituents
   TRefArray Particles; // references to generated particles
 
@@ -325,23 +346,6 @@ public:
   const CompBase *GetCompare() const { return fgCompare; }
 
   TLorentzVector P4();
-
-  // -- PileUpJetID variables ---
-
-  Int_t    NCharged;
-  Int_t    NNeutrals;
-  Float_t  Beta;
-  Float_t  BetaStar;
-  Float_t  MeanSqDeltaR;
-  Float_t  PTD;
-  Float_t  FracPt[5];
-  
-  //---	bostedWWanalisys variables
-  
-  Float_t PrunedMass;
-  Float_t tau1;
-  Float_t tau2;
-  Float_t tau3;
 
   ClassDef(Jet, 2)
 };
@@ -373,16 +377,20 @@ public:
   Float_t ZOuter; // track position (z component) at the tracker edge
   Float_t TOuter; // track position (z component) at the tracker edge
 
-  TRef Particle; // reference to generated particle
+  Float_t Dxy;     // track signed transverse impact parameter
+  Float_t SDxy;    // signed error on the track signed transverse impact parameter
+  Float_t Xd;      // X coordinate of point of closest approach to vertex
+  Float_t Yd;      // Y coordinate of point of closest approach to vertex
+  Float_t Zd;      // Z coordinate of point of closest approach to vertex
 
-  Int_t VertexID_gen;
+  TRef Particle; // reference to generated particle
 
   static CompBase *fgCompare; //!
   const CompBase *GetCompare() const { return fgCompare; }
 
   TLorentzVector P4();
 
-  ClassDef(Track, 1)
+  ClassDef(Track, 2)
 };
 
 //---------------------------------------------------------------------------
@@ -411,6 +419,30 @@ public:
   TLorentzVector P4();
 
   ClassDef(Tower, 1)
+};
+
+//---------------------------------------------------------------------------
+
+class HectorHit: public SortableObject
+{
+public:
+  Float_t E; // reconstructed energy [GeV]
+
+  Float_t Tx; // angle of the momentum in the horizontal (x,z) plane [urad]
+  Float_t Ty; // angle of the momentum in the verical (y,z) plane [urad]
+
+  Float_t T; // time of flight to the detector [s]
+
+  Float_t X; // horizontal distance to the beam [um]
+  Float_t Y; // vertical distance to the beam [um]
+  Float_t S; // distance to the interaction point [m]
+
+  TRef Particle; // reference to generated particle
+
+  static CompBase *fgCompare; //!
+  const CompBase *GetCompare() const { return fgCompare; }
+
+  ClassDef(HectorHit, 1)
 };
 
 //---------------------------------------------------------------------------
@@ -445,7 +477,13 @@ public:
   Float_t DeltaPhi;
 
   TLorentzVector Momentum, Position, Area;
-    
+
+  Float_t  Dxy;
+  Float_t  SDxy;
+  Float_t  Xd;
+  Float_t  Yd;
+  Float_t  Zd;
+
   // PileUpJetID variables
 
   Int_t    NCharged;
@@ -455,17 +493,19 @@ public:
   Float_t  MeanSqDeltaR;
   Float_t  PTD;
   Float_t  FracPt[5];
+
+  // N-subjettiness variables
+
+  Float_t Tau[5];
+  
+  //---mod
   Float_t  Isolation;  
   Float_t  ParticleInCone;   
   Float_t  P_in;
   Float_t  P_out;
   Int_t VertexID_gen;
   Float_t sumPtSquare;
-    
   Float_t PrunedMass;
-  Float_t tau1;
-  Float_t tau2;
-  Float_t tau3;
 
   static CompBase *fgCompare; //!
   const CompBase *GetCompare() const { return fgCompare; }
@@ -485,7 +525,7 @@ private:
 
   void SetFactory(DelphesFactory *factory) { fFactory = factory; }
 
-  ClassDef(Candidate, 1)
+  ClassDef(Candidate, 2)
 };
 
 #endif // DelphesClasses_h
