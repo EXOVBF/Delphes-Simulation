@@ -477,8 +477,8 @@ module FastJetFinder FastJetFinder_CA8 {
 module PileUpJetID PileUpJetID_ak5 {
   set JetInputArray FastJetFinder_ak5/jets
   set TrackInputArray Calorimeter/eflowTracks
-  set NeutralInputArray Calorimeter/eflowTowers
-
+  set NeutralInputArray NeutralTowerMerger/eflowTowers
+  
   set VertexInputArray PileUpMerger/vertices
   # assume perfect pile-up subtraction for tracks with |z| > fZVertexResolution
   # Z vertex resolution in m
@@ -495,8 +495,8 @@ module PileUpJetID PileUpJetID_ak5 {
 module PileUpJetID PileUpJetID_CA8 {
   set JetInputArray FastJetFinder_CA8/jets
   set TrackInputArray Calorimeter/eflowTracks
-  set NeutralInputArray Calorimeter/eflowTowers
-
+  set NeutralInputArray NeutralTowerMerger/eflowTowers
+  
   set VertexInputArray PileUpMerger/vertices
   # assume perfect pile-up subtraction for tracks with |z| > fZVertexResolution
   # Z vertex resolution in m

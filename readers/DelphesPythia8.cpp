@@ -544,7 +544,6 @@ int main(int argc, char *argv[])
         cout << endl <<  "** Exiting..." << endl;
 
         delete pythia;
-        //delete modularDelphes;
         delete confReader;
         delete outputFile;
 
