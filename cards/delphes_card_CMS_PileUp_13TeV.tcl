@@ -23,17 +23,12 @@ set ExecutionPath {
   EFlowMerger
 
   GenJetFinder_ak5
-  GenJetFinder_CA8
   
   Rho
   FastJetFinder_ak5
-  FastJetFinder_CA8
   PileUpJetID_ak5
-  PileUpJetID_CA8
   JetPileUpSubtractor_ak5
-  JetPileUpSubtractor_CA8
   JetEnergyScale_ak5
-  JetEnergyScale_CA8
 
   PhotonEfficiency
   PhotonIsolation
@@ -47,12 +42,9 @@ set ExecutionPath {
   MissingET
 
   BTagging_gen_ak5  
-  BTagging_gen_CA8
   BTagging_ak5  
-  BTagging_CA8
 
   UniqueObjectFinder_ak5
-  UniqueObjectFinder_CA8
 
   TreeWriter
 }
@@ -221,19 +213,19 @@ module MomentumSmearing MuonMomentumSmearing {
   # set ResolutionFormula {resolution formula as a function of eta and pt}
 
   # resolution formula for muons
-  set ResolutionFormula {                  (abs(eta) <= 0.5) * (pt > 0.1   && pt <= 5.0)   * (0.02) + \
-                                           (abs(eta) <= 0.5) * (pt > 5.0   && pt <= 1.0e2) * (0.015) + \
-                                           (abs(eta) <= 0.5) * (pt > 1.0e2 && pt <= 2.0e2) * (0.03) + \
-                                           (abs(eta) <= 0.5) * (pt > 2.0e2)                * (0.05) + \
-                         (abs(eta) > 0.5 && abs(eta) <= 1.5) * (pt > 0.1   && pt <= 5.0)   * (0.03) + \
-                         (abs(eta) > 0.5 && abs(eta) <= 1.5) * (pt > 5.0   && pt <= 1.0e2) * (0.02) + \
-                         (abs(eta) > 0.5 && abs(eta) <= 1.5) * (pt > 1.0e2 && pt <= 2.0e2) * (0.04) + \
-                         (abs(eta) > 0.5 && abs(eta) <= 1.5) * (pt > 2.0e2)                * (0.05) + \
-                         (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 0.1   && pt <= 5.0)   * (0.04) + \
-                         (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 5.0   && pt <= 1.0e2) * (0.035) + \
-                         (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 1.0e2 && pt <= 2.0e2) * (0.05) + \
-                         (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 2.0e2)                * (0.05)}
+
+  set ResolutionFormula {                   (abs(eta) <= 1.5) * (pt > 0.1 && pt <= 1.0)     * (0.015) + \
+                                            (abs(eta) <= 1.5) * (pt > 1.0 && pt <= 1.0e1)   * (0.012) + \
+                                            (abs(eta) <= 1.5) * (pt > 1.0e1 && pt <= 2.0e2) * (0.015) + \
+                                            (abs(eta) <= 1.5) * (pt > 2.0e2)                * (0.03)  + \
+                          (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 0.1 && pt <= 1.0)     * (0.015) + \
+                          (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 1.0 && pt <= 1.0e1)   * (0.015) + \
+                          (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 1.0e1 && pt <= 2.0e2) * (0.025) + \
+                          (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 2.0e2)                * (0.03)}
+
 }
+
+
 
 ##############
 # Track merger
@@ -636,12 +628,14 @@ module Efficiency MuonEfficiency {
   # set EfficiencyFormula {efficiency as a function of eta and pt}
 
   # efficiency formula for muons
-  set EfficiencyFormula {                                      (pt <= 10.0)               * (0.00) + \
-                                           (abs(eta) <= 1.5) * (pt > 10.0 && pt <= 1.0e3) * (0.95) + \
-                                           (abs(eta) <= 1.5) * (pt > 1.0e3)               * (0.95 * exp(0.5 - pt*5.0e-4)) + \
-                         (abs(eta) > 1.5 && abs(eta) <= 2.4) * (pt > 10.0 && pt <= 1.0e3) * (0.95) + \
-                         (abs(eta) > 1.5 && abs(eta) <= 2.4) * (pt > 1.0e3)               * (0.95 * exp(0.5 - pt*5.0e-4)) + \
-                         (abs(eta) > 2.4)                                                 * (0.00)}
+  set EfficiencyFormula { (pt <= 2.0)                                   * (0.00) + \
+                          (abs(eta) <= 2.40) * (pt > 2.0 && pt <= 3.0)  * (0.51) + \
+                          (abs(eta) <= 2.40) * (pt > 3.0 && pt <= 4.0)  * (0.85) + \
+                          (abs(eta) <= 2.40) * (pt > 4.0 && pt <= 11.0) * (0.93) + \
+                          (abs(eta) <= 2.40) * (pt > 11. && pt <= 50.)  * (0.96) + \
+                          (abs(eta) <= 2.40) * (pt > 50. && pt <= 70.)  * (0.98) + \
+                          (abs(eta) <= 2.40) * (pt > 70.0 )             * (1.00) + \
+                          (abs(eta) > 2.40)                             * (0.00)}
 }
 
 ################
