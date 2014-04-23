@@ -327,12 +327,13 @@ module Calorimeter Calorimeter {
   add EnergyFraction {3122} {0.3 0.7}
 
   # set ECalResolutionFormula {resolution formula as a function of eta and energy}
-  set ECalResolutionFormula {                  (abs(eta) <= 3.0) * sqrt(energy^2*0.007^2 + energy*0.07^2 + 0.35^2)  + \
-                             (abs(eta) > 3.0 && abs(eta) <= 5.0) * sqrt(energy^2*0.107^2 + energy*2.08^2)}
+  set ECalResolutionFormula { (abs(eta) <= 3.0)                   * sqrt(energy^2*0.005^2 + energy*0.027^2 + 0.15^2) + \
+                              (abs(eta) > 3.0 && abs(eta) <= 5.0) * sqrt(energy^2*0.08^2 + energy*1.97^2)}
 
   # set HCalResolutionFormula {resolution formula as a function of eta and energy}
-  set HCalResolutionFormula {                  (abs(eta) <= 3.0) * sqrt(energy^2*0.050^2 + energy*1.50^2) + \
-                             (abs(eta) > 3.0 && abs(eta) <= 5.0) * sqrt(energy^2*0.130^2 + energy*2.70^2)}
+  set HCalResolutionFormula { (abs(eta) <= 1.7)                   * sqrt(energy^2*0.0302^2 + energy*0.5205^2 + 1.59^2) + \
+                              (abs(eta) > 1.7 && abs(eta) <= 3.2) * sqrt(energy^2*0.050^2 + energy*0.706^2) + \
+                              (abs(eta) > 3.0 && abs(eta) <= 4.9) * sqrt(energy^2*0.05^2 + energy*1.00^2)}
 }
 
 ##########################
@@ -390,12 +391,13 @@ module FastJetFinder Rho {
 
   # jet algorithm: 1 CDFJetClu, 2 MidPoint, 3 SIScone, 4 kt, 5 Cambridge/Aachen, 6 antikt
   set JetAlgorithm 4
-  set ParameterR 0.9
+  set ParameterR 0.4
   set GhostEtaMax 5.0
+  set RhoEtaMax 5.0 
   
-  add RhoEtaRange 0.0 1.5
-  add RhoEtaRange 1.5 2.5
-  add RhoEtaRange 2.5 5.0
+#  add RhoEtaRange 0.0 1.5
+#  add RhoEtaRange 1.5 2.5
+#  add RhoEtaRange 2.5 5.0
 
   set JetPTMin 0.0
 }
@@ -488,7 +490,7 @@ module PileUpJetID PileUpJetID_ak5 {
   
   set OutputArray jets
 
-  set UseConstituents 1
+  set UseConstituents 0
   set ParameterR 0.5
 
   set JetPTMin 10.0
@@ -506,7 +508,7 @@ module PileUpJetID PileUpJetID_CA8 {
   
   set OutputArray jets
 
-  set UseConstituents 1
+  set UseConstituents 0
   set ParameterR 0.8
 
   set JetPTMin 10.0
