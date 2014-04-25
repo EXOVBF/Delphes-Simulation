@@ -31,53 +31,53 @@ using namespace std;
 
 bool lhe_event_preselection(vector< vector<float> >* LHE_event, float Mjj_cut, vector<ExRootTreeBranch*> branchVector)
 {
-    vector<TLorentzVector> outQuark;
+    vector<TLorentzVector> outPartons;
     int leptons=0;
     int Mjj_check=0;
     
-    //--- search for final state quark in the event
+    //---search for final state partons in the event---
     for(int iPart = 0; iPart < LHE_event->size(); iPart++)
     {
         vector<float> particle = LHE_event->at(iPart);
         TLorentzVector tmp4vect;
         tmp4vect.SetPxPyPzE(particle.at(6), particle.at(7), particle.at(8), particle.at(9));
-        if(particle.at(1) == 1 && abs(particle.at(0)) > 0 && abs(particle.at(0)) < 7)
+        if(particle.at(1) == 1 && ((abs(particle.at(0)) > 0 && abs(particle.at(0)) < 7) || abs(particle.at(0)) == 21))
         {
-            outQuark.push_back(tmp4vect);
+            outPartons.push_back(tmp4vect);
         }
         if(particle.at(1) == 1 && (abs(particle.at(0)) == 11 || abs(particle.at(0)) == 13 || abs(particle.at(0)) == 15))
         {
             leptons++;
         }
     }
-    // reject fully hadronic events
+    //---reject fully hadronic events
     if(leptons < 1)
     {
         return false;
     }
-    //--- apply the VBF preselection cut on Mjj
-    for(int iQuark = 0; iQuark < outQuark.size(); iQuark++)
+    //---apply the VBF preselection cut on Mjj---
+    for(int iPartons = 0; iPartons < outPartons.size(); iPartons++)
     {
-        TLorentzVector tmp4vect = outQuark.at(iQuark);
-        for(int jQuark = iQuark+1; jQuark < outQuark.size(); jQuark++)
+        TLorentzVector tmp4vect = outPartons.at(iPartons);
+        for(int jQuark = iPartons+1; jQuark < outPartons.size(); jQuark++)
         {
-            tmp4vect += outQuark.at(jQuark);
+            tmp4vect += outPartons.at(jQuark);
             if(tmp4vect.M() > Mjj_cut)
             {
                 Mjj_check = 1;
             }
         }
     }
-    if( outQuark.size() > 2 && Mjj_check == 0 )
+    if( outPartons.size() > 2 && Mjj_check == 0 )
     {
         return false;
     }
-    //--- if preselection is passed save gen_lhe infos
+    //---if preselection is passed save gen_lhe infos---
     vector<int> W_codes;
     vector<float> *n_lep_gen;
     vector<float> *lep_pt, *lep_eta, *lep_phi, *lep_flv;
     vector<float> *nu_pt, *nu_eta, *nu_phi, *nu_flv;
-    vector<float> *q_pt, *q_eta, *q_phi, *q_flv, *q_fW;
+    vector<float> *p_pt, *p_eta, *p_phi, *p_flv, *p_fW;
     vector<float> *W_pt, *W_phi, *W_eta, *W_m, *W_pid;
     vector<float> *x_pt, *x_phi, *x_eta, *x_m;
 
@@ -90,11 +90,11 @@ bool lhe_event_preselection(vector< vector<float> >* LHE_event, float Mjj_cut, v
     nu_eta = (vector<float>*)((branchVector.at(6))->NewFloatEntry());
     nu_phi = (vector<float>*)((branchVector.at(7))->NewFloatEntry());
     nu_flv = (vector<float>*)((branchVector.at(8))->NewFloatEntry());
-    q_pt = (vector<float>*)((branchVector.at(9))->NewFloatEntry());
-    q_eta = (vector<float>*)((branchVector.at(10))->NewFloatEntry());
-    q_phi = (vector<float>*)((branchVector.at(11))->NewFloatEntry());
-    q_flv = (vector<float>*)((branchVector.at(12))->NewFloatEntry());
-    q_fW = (vector<float>*)((branchVector.at(13))->NewFloatEntry());
+    p_pt = (vector<float>*)((branchVector.at(9))->NewFloatEntry());
+    p_eta = (vector<float>*)((branchVector.at(10))->NewFloatEntry());
+    p_phi = (vector<float>*)((branchVector.at(11))->NewFloatEntry());
+    p_flv = (vector<float>*)((branchVector.at(12))->NewFloatEntry());
+    p_fW = (vector<float>*)((branchVector.at(13))->NewFloatEntry());
     W_pt = (vector<float>*)((branchVector.at(14))->NewFloatEntry());
     W_eta = (vector<float>*)((branchVector.at(15))->NewFloatEntry());
     W_phi = (vector<float>*)((branchVector.at(16))->NewFloatEntry());
@@ -107,7 +107,7 @@ bool lhe_event_preselection(vector< vector<float> >* LHE_event, float Mjj_cut, v
         x_phi = (vector<float>*)((branchVector.at(21))->NewFloatEntry());
         x_m = (vector<float>*)((branchVector.at(22))->NewFloatEntry());    
     }
-    //---loop on lhe events particle searching for W's
+    //---loop on lhe events particle searching for W's---
     for(int iPart = 0; iPart < LHE_event->size(); iPart++)
     { 
         vector<float> particle = LHE_event->at(iPart);
@@ -123,12 +123,13 @@ bool lhe_event_preselection(vector< vector<float> >* LHE_event, float Mjj_cut, v
             W_codes.push_back(iPart+1);
         }
     }
-    //---loop on lhe events particle
+    //---loop on lhe events particle---
     for(int iPart = 0; iPart < LHE_event->size(); iPart++)
     { 
         vector<float> particle = LHE_event->at(iPart);
         TLorentzVector tmp4vect;
         tmp4vect.SetPxPyPzE(particle.at(6), particle.at(7), particle.at(8), particle.at(9));
+        //---Graviton
         if(branchVector.size() > 19 && particle.at(1) == 2 && abs(particle.at(0)) == 39)
         {
             x_pt->push_back(tmp4vect.Pt());
@@ -136,21 +137,23 @@ bool lhe_event_preselection(vector< vector<float> >* LHE_event, float Mjj_cut, v
             x_phi->push_back(tmp4vect.Phi());
             x_m->push_back(tmp4vect.M());
         }
-        if(particle.at(1) == 1 && abs(particle.at(0)) > 0 && abs(particle.at(0)) < 7)
+        //---Partons
+        if(particle.at(1) == 1 && ((abs(particle.at(0)) > 0 && abs(particle.at(0)) < 7) || abs(particle.at(0)) == 21))
         {
-            q_pt->push_back(tmp4vect.Pt());
-            q_eta->push_back(tmp4vect.Eta());
-            q_phi->push_back(tmp4vect.Phi());
-            q_flv->push_back(particle.at(0));
+            p_pt->push_back(tmp4vect.Pt());
+            p_eta->push_back(tmp4vect.Eta());
+            p_phi->push_back(tmp4vect.Phi());
+            p_flv->push_back(particle.at(0));
             if( particle.at(2) == particle.at(3) && (particle.at(2) == W_codes.front() || particle.at(2) == W_codes.back()) )
             {
-                q_fW->push_back(1);
+                p_fW->push_back(1);
             }
             else
             {
-                q_fW->push_back(0);
+                p_fW->push_back(0);
             }
         }
+        //---charged leptons
         if(particle.at(1) == 1 && (abs(particle.at(0)) == 11 || abs(particle.at(0)) == 13 || abs(particle.at(0)) == 15))
         {
             lep_pt->push_back(tmp4vect.Pt());
@@ -158,6 +161,7 @@ bool lhe_event_preselection(vector< vector<float> >* LHE_event, float Mjj_cut, v
             lep_phi->push_back(tmp4vect.Phi());
             lep_flv->push_back(particle.at(0));
         }
+        //---neutrinos
         if(particle.at(1) == 1 && (abs(particle.at(0)) == 12 || abs(particle.at(0)) == 14 || abs(particle.at(0)) == 16))
         {
             nu_pt->push_back(tmp4vect.Pt());
@@ -351,12 +355,12 @@ int main(int argc, char *argv[])
         branchGen.push_back(treeWriter->NewFloatBranch("lhe_nu_eta"));
         branchGen.push_back(treeWriter->NewFloatBranch("lhe_nu_phi"));
         branchGen.push_back(treeWriter->NewFloatBranch("lhe_nu_flv"));
-        //--- gen quark infos
-        branchGen.push_back(treeWriter->NewFloatBranch("lhe_q_pt"));
-        branchGen.push_back(treeWriter->NewFloatBranch("lhe_q_eta"));
-        branchGen.push_back(treeWriter->NewFloatBranch("lhe_q_phi"));
-        branchGen.push_back(treeWriter->NewFloatBranch("lhe_q_flv"));
-        branchGen.push_back(treeWriter->NewFloatBranch("lhe_q_from_W"));
+        //--- gen partons infos
+        branchGen.push_back(treeWriter->NewFloatBranch("lhe_p_pt"));
+        branchGen.push_back(treeWriter->NewFloatBranch("lhe_p_eta"));
+        branchGen.push_back(treeWriter->NewFloatBranch("lhe_p_phi"));
+        branchGen.push_back(treeWriter->NewFloatBranch("lhe_p_flv"));
+        branchGen.push_back(treeWriter->NewFloatBranch("lhe_p_from_W"));
         //--- gen W infos
         branchGen.push_back(treeWriter->NewFloatBranch("lhe_W_pt"));
         branchGen.push_back(treeWriter->NewFloatBranch("lhe_W_eta"));
