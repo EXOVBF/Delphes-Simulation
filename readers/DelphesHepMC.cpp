@@ -8,13 +8,11 @@
 #include "TApplication.h"
 
 #include "TFile.h"
-#include "TTree.h"
 #include "TObjArray.h"
 #include "TStopwatch.h"
 #include "TDatabasePDG.h"
 #include "TParticlePDG.h"
 #include "TLorentzVector.h"
-#include "TClonesArray.h"
 
 #include "modules/Delphes.h"
 #include "classes/DelphesClasses.h"
@@ -22,13 +20,12 @@
 #include "classes/DelphesHepMCReader.h"
 
 #include "ExRootAnalysis/ExRootTreeWriter.h"
-#include "ExRootAnalysis/ExRootTreeReader.h"
 #include "ExRootAnalysis/ExRootTreeBranch.h"
 #include "ExRootAnalysis/ExRootProgressBar.h"
 
 using namespace std;
 
-//****************************************************************************************
+//---------------------------------------------------------------------------
 
 static bool interrupted = false;
 
@@ -47,7 +44,6 @@ int main(int argc, char *argv[])
   TFile *outputFile = 0;
   TStopwatch readStopWatch, procStopWatch;
   ExRootTreeWriter *treeWriter = 0;
-  ExRootTreeWriter *treeHepMC = 0;
   ExRootTreeBranch *branchEvent = 0;
   ExRootConfReader *confReader = 0;
   Delphes *modularDelphes = 0;
@@ -84,11 +80,10 @@ int main(int argc, char *argv[])
       message << "can't create output file " << argv[2];
       throw runtime_error(message.str());
     }
-    
-    treeWriter = new ExRootTreeWriter(outputFile, "Delphes");    
-    treeHepMC = new ExRootTreeWriter();
-        
-    branchEvent = treeHepMC->NewBranch("Event", HepMCEvent::Class());
+
+    treeWriter = new ExRootTreeWriter(outputFile, "Delphes");
+
+    branchEvent = treeWriter->NewBranch("Event", HepMCEvent::Class());
 
     confReader = new ExRootConfReader;
     confReader->ReadFile(argv[1]);
@@ -159,7 +154,7 @@ int main(int argc, char *argv[])
 
       // Loop over all objects
       eventCounter = 0;
-      //treeWriter->Clear();
+      treeWriter->Clear();
       modularDelphes->Clear();
       reader->Clear();
       readStopWatch.Start();
@@ -183,7 +178,7 @@ int main(int argc, char *argv[])
 
             treeWriter->Fill();
 
-            //treeWriter->Clear();
+            treeWriter->Clear();
           }
 
           modularDelphes->Clear();
@@ -212,6 +207,7 @@ int main(int argc, char *argv[])
     delete reader;
     delete modularDelphes;
     delete confReader;
+    delete treeWriter;
     delete outputFile;
 
     return 0;

@@ -25,6 +25,7 @@ CompBase *Muon::fgCompare = CompPT<Muon>::Instance();
 CompBase *Jet::fgCompare = CompPT<Jet>::Instance();
 CompBase *Track::fgCompare = CompPT<Track>::Instance();
 CompBase *Tower::fgCompare = CompE<Tower>::Instance();
+CompBase *HectorHit::fgCompare = CompE<HectorHit>::Instance();
 CompBase *Candidate::fgCompare = CompMomentumPt<Candidate>::Instance();
 
 //------------------------------------------------------------------------------
@@ -110,24 +111,23 @@ Candidate::Candidate() :
   Momentum(0.0, 0.0, 0.0, 0.0),
   Position(0.0, 0.0, 0.0, 0.0),
   Area(0.0, 0.0, 0.0, 0.0),
+  Dxy(0), SDxy(0), Xd(0), Yd(0), Zd(0),
   NCharged(0),
   NNeutrals(0),
   Beta(0),
   BetaStar(0),
   MeanSqDeltaR(0),
   PTD(0),
-  Isolation(0),	// pt_sum/pt_candidate
-  ParticleInCone(0),
-  P_in(0), 	//P before momentum smearing
-  P_out(0), 	// P after momentum smearing
-  VertexID_gen(0),
-  sumPtSquare(0),
-  PrunedMass(0),
-  tau1(0),
-  tau2(0),
-  tau3(0),
   fFactory(0),
-  fArray(0)
+  fArray(0),
+  //---mod
+  Isolation(0),	        // pt_sum/pt_candidate
+  ParticleInCone(0),    // particle in the cone
+  P_in(0), 	            //P before momentum smearing
+  P_out(0), 	        // P after momentum smearing
+  VertexID_gen(0),
+  sumPtSquare(0),       // sum pt^2 of all the tracks originating from the same PV
+  PrunedMass(0)        
 {
   Edges[0] = 0.0;
   Edges[1] = 0.0;
@@ -138,6 +138,11 @@ Candidate::Candidate() :
   FracPt[2] = 0.0;
   FracPt[3] = 0.0;
   FracPt[4] = 0.0;
+  Tau[0] = 0.0;
+  Tau[1] = 0.0;
+  Tau[2] = 0.0;
+  Tau[3] = 0.0;
+  Tau[4] = 0.0;
 }
 
 //------------------------------------------------------------------------------
@@ -224,11 +229,12 @@ void Candidate::Copy(TObject &obj) const
   object.DeltaPhi = DeltaPhi;
   object.Momentum = Momentum;
   object.Position = Position;
-  object.P_in = P_in;
-  object.P_out = P_out;
   object.Area = Area;
-  object.VertexID_gen = VertexID_gen;
-  object.sumPtSquare = sumPtSquare;  
+  object.Dxy = Dxy;
+  object.SDxy = SDxy;
+  object.Xd = Xd;
+  object.Yd = Yd;
+  object.Zd = Zd;
 
   object.NCharged = NCharged;
   object.NNeutrals = NNeutrals;
@@ -236,21 +242,29 @@ void Candidate::Copy(TObject &obj) const
   object.BetaStar = BetaStar;
   object.MeanSqDeltaR = MeanSqDeltaR;
   object.PTD = PTD;
-  object.Isolation = Isolation;
-  object.ParticleInCone = ParticleInCone;
   object.FracPt[0] = FracPt[0];
   object.FracPt[1] = FracPt[1];
   object.FracPt[2] = FracPt[2];
   object.FracPt[3] = FracPt[3];
   object.FracPt[4] = FracPt[4];
-  object.PrunedMass = PrunedMass; 
-  object.tau1 = tau1; 
-  object.tau2 = tau2; 
-  object.tau3 = tau3; 
+  object.Tau[0] = Tau[0];
+  object.Tau[1] = Tau[1];
+  object.Tau[2] = Tau[2];
+  object.Tau[3] = Tau[3];
+  object.Tau[4] = Tau[4];
 
   object.fFactory = fFactory;
   object.fArray = 0;
-
+  
+  //---mod
+  object.Isolation = Isolation;	    
+  object.ParticleInCone = ParticleInCone;
+  object.P_in = P_in;
+  object.P_out = P_out;
+  object.VertexID_gen = VertexID_gen;
+  object.sumPtSquare = sumPtSquare;
+  object.PrunedMass = PrunedMass;
+  
   if(fArray && fArray->GetEntriesFast() > 0)
   {
     TIter itArray(fArray);
@@ -274,8 +288,6 @@ void Candidate::Clear(Option_t* option)
   Charge = 0;
   Mass = 0.0;
   IsPU = 0;
-  VertexID_gen = 0;
-  sumPtSquare =0;
   IsConstituent = 0;
   BTag = 0;
   TauTag = 0;
@@ -290,27 +302,37 @@ void Candidate::Clear(Option_t* option)
   Momentum.SetXYZT(0.0, 0.0, 0.0, 0.0);
   Position.SetXYZT(0.0, 0.0, 0.0, 0.0);
   Area.SetXYZT(0.0, 0.0, 0.0, 0.0);
-
+  Dxy = 0.0;
+  SDxy = 0.0;
+  Xd = 0.0;
+  Yd = 0.0;
+  Zd = 0.0;
   NCharged = 0;
   NNeutrals = 0;
   Beta = 0.0;
   BetaStar = 0.0;
   MeanSqDeltaR = 0.0;
   PTD = 0.0;
-  P_in = 0.0; //P before momentum smearing
-  P_out = 0.0; // P after momentum smearing
-  Isolation = 0.0;
-  ParticleInCone = 0.0;
   FracPt[0] = 0.0;
   FracPt[1] = 0.0;
   FracPt[2] = 0.0;
   FracPt[3] = 0.0;
   FracPt[4] = 0.0;
-
-  PrunedMass = 0.0;
-  tau1 = 0.0;
-  tau2 = 0.0;
-  tau3 = 0.0;
+  Tau[0] = 0.0;
+  Tau[1] = 0.0;
+  Tau[2] = 0.0;
+  Tau[3] = 0.0;
+  Tau[4] = 0.0;
 
   fArray = 0;
+  
+  //---mod
+  Isolation = 0;	    
+  ParticleInCone = 0;
+  P_in = 0;
+  P_out = 0;
+  VertexID_gen = 0;
+  sumPtSquare = 0;
+  PrunedMass = 0;
+  
 }

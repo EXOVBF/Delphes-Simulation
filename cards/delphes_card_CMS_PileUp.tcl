@@ -19,6 +19,7 @@ set ExecutionPath {
   Vertexing
   Calorimeter
   TrackPileUpSubtractor
+  NeutralTowerMerger
   EFlowMerger
 
   GenJetFinder_ak5
@@ -31,7 +32,6 @@ set ExecutionPath {
   PileUpJetID_CA8
   JetPileUpSubtractor_ak5
   JetPileUpSubtractor_CA8
-
   JetEnergyScale_ak5
   JetEnergyScale_CA8
 
@@ -68,8 +68,11 @@ module PileUpMerger PileUpMerger {
   set VertexOutputArray vertices
 
   # pre-generated minbias input file
+
 #  set PileUpFile /afs/cern.ch/user/s/spigazzi/work/EXOVBF/MC_Data/minBias/MinBias500K_8TeV.pileup
   set PileUpFile /afs/cern.ch/user/s/spigazzi/work/public/MinBias100K_13TeV.pileup
+#  set PileUpFile /afs/cern.ch/work/s/spigazzi/public/MinBias_8TeV_1M.pileup
+
 
   # average expected pile up 20 for LHC-8TeV
   set MeanPileUp 20	
@@ -225,15 +228,15 @@ module MomentumSmearing MuonMomentumSmearing {
   set ResolutionFormula {                  (abs(eta) <= 0.5) * (pt > 0.1   && pt <= 5.0)   * (0.02) + \
                                            (abs(eta) <= 0.5) * (pt > 5.0   && pt <= 1.0e2) * (0.015) + \
                                            (abs(eta) <= 0.5) * (pt > 1.0e2 && pt <= 2.0e2) * (0.03) + \
-                                           (abs(eta) <= 0.5) * (pt > 2.0e2)                * (0.05 + pt*1.e-4) + \
+                                           (abs(eta) <= 0.5) * (pt > 2.0e2)                * (0.05) + \
                          (abs(eta) > 0.5 && abs(eta) <= 1.5) * (pt > 0.1   && pt <= 5.0)   * (0.03) + \
                          (abs(eta) > 0.5 && abs(eta) <= 1.5) * (pt > 5.0   && pt <= 1.0e2) * (0.02) + \
                          (abs(eta) > 0.5 && abs(eta) <= 1.5) * (pt > 1.0e2 && pt <= 2.0e2) * (0.04) + \
-                         (abs(eta) > 0.5 && abs(eta) <= 1.5) * (pt > 2.0e2)                * (0.05 + pt*1.e-4) + \
+                         (abs(eta) > 0.5 && abs(eta) <= 1.5) * (pt > 2.0e2)                * (0.05) + \
                          (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 0.1   && pt <= 5.0)   * (0.04) + \
                          (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 5.0   && pt <= 1.0e2) * (0.035) + \
                          (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 1.0e2 && pt <= 2.0e2) * (0.05) + \
-                         (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 2.0e2)                * (0.05 + pt*1.e-4)}
+                         (abs(eta) > 1.5 && abs(eta) <= 2.5) * (pt > 2.0e2)                * (0.05)}
 }
 
 ##############
@@ -271,7 +274,8 @@ module Calorimeter Calorimeter {
   set PhotonOutputArray photons
 
   set EFlowTrackOutputArray eflowTracks
-  set EFlowTowerOutputArray eflowTowers
+  set EFlowPhotonOutputArray eflowPhotons
+  set EFlowNeutralHadronOutputArray eflowNeutralHadrons
 
   set pi [expr {acos(-1)}]
 
@@ -308,11 +312,10 @@ module Calorimeter Calorimeter {
 
   # default energy fractions {abs(PDG code)} {Fecal Fhcal}
   add EnergyFraction {0} {0.0 1.0}
-  # energy fractions for e, gamma 
+  # energy fractions for e, gamma and pi0
   add EnergyFraction {11} {1.0 0.0}
   add EnergyFraction {22} {1.0 0.0}
   add EnergyFraction {111} {1.0 0.0}
-  # energy fractions pi0 pi
   # energy fractions for muon, neutrinos and neutralinos
   add EnergyFraction {12} {0.0 0.0}
   add EnergyFraction {13} {0.0 0.0}
@@ -328,12 +331,13 @@ module Calorimeter Calorimeter {
   add EnergyFraction {3122} {0.3 0.7}
 
   # set ECalResolutionFormula {resolution formula as a function of eta and energy}
-  set ECalResolutionFormula {                  (abs(eta) <= 3.0) * sqrt(energy^2*0.007^2 + energy*0.07^2 + 0.35^2)  + \
-                             (abs(eta) > 3.0 && abs(eta) <= 5.0) * sqrt(energy^2*0.107^2 + energy*2.08^2)}
+  set ECalResolutionFormula { (abs(eta) <= 3.0)                   * sqrt(energy^2*0.005^2 + energy*0.027^2 + 0.15^2) + \
+                              (abs(eta) > 3.0 && abs(eta) <= 5.0) * sqrt(energy^2*0.08^2 + energy*1.97^2)}
 
   # set HCalResolutionFormula {resolution formula as a function of eta and energy}
-  set HCalResolutionFormula {                  (abs(eta) <= 3.0) * sqrt(energy^2*0.050^2 + energy*1.50^2) + \
-                             (abs(eta) > 3.0 && abs(eta) <= 5.0) * sqrt(energy^2*0.130^2 + energy*2.70^2)}
+  set HCalResolutionFormula { (abs(eta) <= 1.7)                   * sqrt(energy^2*0.0302^2 + energy*0.5205^2 + 1.59^2) + \
+                              (abs(eta) > 1.7 && abs(eta) <= 3.2) * sqrt(energy^2*0.050^2 + energy*0.706^2) + \
+                              (abs(eta) > 3.0 && abs(eta) <= 4.9) * sqrt(energy^2*0.05^2 + energy*1.00^2)}
 }
 
 ##########################
@@ -353,13 +357,25 @@ module TrackPileUpSubtractor TrackPileUpSubtractor {
 }
 
 ####################
+# Neutral tower merger
+####################
+
+module Merger NeutralTowerMerger {
+# add InputArray InputArray
+  add InputArray Calorimeter/eflowPhotons
+  add InputArray Calorimeter/eflowNeutralHadrons
+  set OutputArray eflowTowers
+}
+
+####################
 # Energy flow merger
 ####################
 
 module Merger EFlowMerger {
 # add InputArray InputArray
   add InputArray TrackPileUpSubtractor/eflowTracks
-  add InputArray Calorimeter/eflowTowers
+  add InputArray Calorimeter/eflowPhotons
+  add InputArray Calorimeter/eflowNeutralHadrons
   set OutputArray eflow
 }
 
@@ -379,12 +395,13 @@ module FastJetFinder Rho {
 
   # jet algorithm: 1 CDFJetClu, 2 MidPoint, 3 SIScone, 4 kt, 5 Cambridge/Aachen, 6 antikt
   set JetAlgorithm 4
-  set ParameterR 0.9
+  set ParameterR 0.4  
   set GhostEtaMax 5.0
+  set RhoEtaMax 5.0 
   
-  add RhoEtaRange 0.0 1.5
-  add RhoEtaRange 1.5 2.5
-  add RhoEtaRange 2.5 5.0
+#  add RhoEtaRange 0.0 1.5
+#  add RhoEtaRange 1.5 2.5
+#  add RhoEtaRange 2.5 5.0
 
   set JetPTMin 0.0
 }
@@ -418,6 +435,7 @@ module FastJetFinder GenJetFinder_CA8 {
   set JetPTMin 10.0
   set ComputePrunedMass true;
   set ComputeNsubjettiness true;
+  set AxisMode 4;
 }
 
 ############
@@ -457,6 +475,7 @@ module FastJetFinder FastJetFinder_CA8 {
   set JetPTMin 10.0
   set ComputePrunedMass true;
   set ComputeNsubjettiness true;
+  set AxisMode 4;
 }
 
 ###########################
@@ -466,8 +485,8 @@ module FastJetFinder FastJetFinder_CA8 {
 module PileUpJetID PileUpJetID_ak5 {
   set JetInputArray FastJetFinder_ak5/jets
   set TrackInputArray Calorimeter/eflowTracks
-  set NeutralInputArray Calorimeter/eflowTowers
-
+  set NeutralInputArray NeutralTowerMerger/eflowTowers
+  
   set VertexInputArray PileUpMerger/vertices
   # assume perfect pile-up subtraction for tracks with |z| > fZVertexResolution
   # Z vertex resolution in m
@@ -475,7 +494,7 @@ module PileUpJetID PileUpJetID_ak5 {
   
   set OutputArray jets
 
-  set UseConstituents 1
+  set UseConstituents 0
   set ParameterR 0.5
 
   set JetPTMin 10.0
@@ -484,8 +503,8 @@ module PileUpJetID PileUpJetID_ak5 {
 module PileUpJetID PileUpJetID_CA8 {
   set JetInputArray FastJetFinder_CA8/jets
   set TrackInputArray Calorimeter/eflowTracks
-  set NeutralInputArray Calorimeter/eflowTowers
-
+  set NeutralInputArray NeutralTowerMerger/eflowTowers
+  
   set VertexInputArray PileUpMerger/vertices
   # assume perfect pile-up subtraction for tracks with |z| > fZVertexResolution
   # Z vertex resolution in m
@@ -493,7 +512,7 @@ module PileUpJetID PileUpJetID_CA8 {
   
   set OutputArray jets
 
-  set UseConstituents 1
+  set UseConstituents 0
   set ParameterR 0.8
 
   set JetPTMin 10.0
@@ -653,8 +672,7 @@ module Isolation MuonIsolation {
 
 module Merger MissingET {
 # add InputArray InputArray
-  add InputArray Calorimeter/eflowTracks
-  add InputArray Calorimeter/eflowTowers
+  add InputArray EFlowMerger/eflow
   set MomentumOutputArray momentum
 }
 

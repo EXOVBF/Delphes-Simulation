@@ -22,7 +22,6 @@
 #include <iostream>
 #include <stdexcept>
 #include <sstream>
-#include <vector>
 
 using namespace std;
 
@@ -70,7 +69,6 @@ ExRootTreeBranch::ExRootTreeBranch(const char *name, TTree *tree) :
 
 ExRootTreeBranch::~ExRootTreeBranch()
 {
-  //if(fDataFloat) delete fDataFloat;  
   if(fData) delete fData;
 }
 
@@ -110,7 +108,6 @@ vector<float>* ExRootTreeBranch::NewFloatEntry()
 void ExRootTreeBranch::Clear()
 {
   fSize = 0;
-  //if(fDataFloat) fDataFloat->clear();
   if(fData) fData->Clear();
 }
 

@@ -210,7 +210,7 @@ endif
 ifneq ($(LD_LIBRARY_PATH),)
 DELPHES_LIBS += -L$(subst include,lib,$(subst :, -L,$(LD_LIBRARY_PATH)))
 endif
-DELPHES_LIBS += -lFWCoreFWLite -lDataFormatsFWLite -lDataFormatsPatCandidates -lDataFormatsLuminosity -lCommonToolsUtils
+DELPHES_LIBS += -lGenVector -lFWCoreFWLite -lDataFormatsFWLite -lDataFormatsPatCandidates -lDataFormatsLuminosity -lCommonToolsUtils
 endif
 
 ifneq ($(PROMC),)
@@ -222,12 +222,12 @@ endif
 ifneq ($(PYTHIA8),)
 HAS_PYTHIA8 = true
 CXXFLAGS += -I$(PYTHIA8)/include
-DELPHES_LIBS += -L$(PYTHIA8)/lib -lpythia8 -lLHAPDF -lgfortran -lz
+DELPHES_LIBS += -L$(PYTHIA8)/lib -L$(LHAPDF) -lpythia8 -lLHAPDF -lgfortran -lz
 else
 ifneq ($(PYTHIA8DATA),)
 HAS_PYTHIA8 = true
 CXXFLAGS += -I$(PYTHIA8DATA)/../include
-DELPHES_LIBS += -L$(PYTHIA8DATA)/../lib -lpythia8 -lLHAPDF -lgfortran -lz
+DELPHES_LIBS += -L$(PYTHIA8DATA)/../lib -L$(LHAPDF) -lpythia8 -lLHAPDF -lgfortran -lz
 endif
 endif
 
@@ -272,7 +272,7 @@ dictDeps {DELPHES_DICT} {classes/ClassesLinkDef.h} {modules/ModulesLinkDef.h} {e
 
 dictDeps {DISPLAY_DICT} {display/DisplayLinkDef.h}
 
-sourceDeps {DELPHES} {classes/*.cc} {modules/*.cc} {external/ExRootAnalysis/*.cc} {external/fastjet/*.cc} {external/fastjet/tools/*.cc} {external/fastjet/plugins/*/*.cc}
+sourceDeps {DELPHES} {classes/*.cc} {modules/*.cc} {external/ExRootAnalysis/*.cc} {external/fastjet/*.cc} {external/fastjet/tools/*.cc} {external/fastjet/plugins/*/*.cc} {external/fastjet/contribs/*/*.cc} {external/Hector/*.cc}
 
 sourceDeps {DISPLAY} {display/*.cc}
 
