@@ -1,4 +1,3 @@
-
 /** \class FastJetFinder
  *
  *  Finds jets using FastJet library.
@@ -117,6 +116,10 @@ void FastJetFinder::Init()
   fRcutOff = GetDouble("RcutOff", 0.8); // used only if Njettiness is used as jet clustering algo (case 8)
   fN = GetInt("N", 2);                  // used only if Njettiness is used as jet clustering algo (case 8)
 
+  //--- jet charge power index
+
+  fKappa = GetDouble("kappa",1);
+
   // ---  Jet Area Parameters ---
   fAreaAlgorithm = GetInt("AreaAlgorithm", 0);
   fComputeRho = GetBool("ComputeRho", false);
@@ -233,6 +236,7 @@ void FastJetFinder::Process()
   vector<PseudoJet> inputList, outputList;
   ClusterSequence *sequence;
   map< Double_t, Double_t >::iterator itEtaRangeMap;
+  Float_t charge=0;
 
   DelphesFactory *factory = GetFactory();
 
@@ -303,6 +307,7 @@ void FastJetFinder::Process()
 
     time=0;
     weightTime=0;
+    charge=0;
 
     inputList.clear();
     inputList = sequence->constituents(*itOutputList);
@@ -319,6 +324,10 @@ void FastJetFinder::Process()
       time += TMath::Sqrt(constituent->Momentum.E())*(constituent->Position.T());
       weightTime += TMath::Sqrt(constituent->Momentum.E());
 
+      // compute jet charge
+      float qq = constituent->Charge;
+      charge += qq*pow(constituent->Momentum.Pt(),fKappa);
+
       candidate->AddCandidate(constituent);
     }
 
@@ -330,6 +339,9 @@ void FastJetFinder::Process()
 
     candidate->DeltaEta = detaMax;
     candidate->DeltaPhi = dphiMax;
+
+    charge /= pow(candidate->Momentum.Pt(),fKappa);;
+    candidate->jetCharge = charge;
 
     // --- compute N-subjettiness with N = 1,2,3,4,5 ----
 
@@ -366,6 +378,8 @@ void FastJetFinder::Process()
       candidate->Tau[3] = nSub4(*itOutputList);
       candidate->Tau[4] = nSub5(*itOutputList);
     }
+
+
 
 
     fOutputArray->Add(candidate);

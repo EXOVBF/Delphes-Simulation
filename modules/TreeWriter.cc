@@ -202,8 +202,9 @@ void TreeWriter::Init()
       ExRootTreeBranch* branch_jet_3 = NewFloatBranch(branchName+"_phi");
       ExRootTreeBranch* branch_jet_4 = NewFloatBranch(branchName+"_mass");
       ExRootTreeBranch* branch_jet_5 = NewFloatBranch(branchName+"_mass_pruned");
-      ExRootTreeBranch* branch_jet_6 = NewFloatBranch(branchName+"_btag");
-      ExRootTreeBranch* branch_jet_7 = NewFloatBranch(branchName+"_Hcal_over_Ecal");
+      ExRootTreeBranch* branch_jet_6 = NewFloatBranch(branchName+"_jetcharge");
+      ExRootTreeBranch* branch_jet_7 = NewFloatBranch(branchName+"_btag");
+      ExRootTreeBranch* branch_jet_8 = NewFloatBranch(branchName+"_Hcal_over_Ecal");
       branchVector[nFill].push_back(branch_jet_0);
       branchVector[nFill].push_back(branch_jet_1);
       branchVector[nFill].push_back(branch_jet_2);
@@ -212,14 +213,15 @@ void TreeWriter::Init()
       branchVector[nFill].push_back(branch_jet_5);
       branchVector[nFill].push_back(branch_jet_6);
       branchVector[nFill].push_back(branch_jet_7);
+      branchVector[nFill].push_back(branch_jet_8);
       if(branchName.Contains("CA8"))
       {
-        ExRootTreeBranch* branch_jet_8 = NewFloatBranch(branchName+"_tau1");
-        ExRootTreeBranch* branch_jet_9 = NewFloatBranch(branchName+"_tau2");
-        ExRootTreeBranch* branch_jet_10 = NewFloatBranch(branchName+"_tau3");
-        branchVector[nFill].push_back(branch_jet_8);
+        ExRootTreeBranch* branch_jet_9 = NewFloatBranch(branchName+"_tau1");
+        ExRootTreeBranch* branch_jet_10 = NewFloatBranch(branchName+"_tau2");
+        ExRootTreeBranch* branch_jet_11 = NewFloatBranch(branchName+"_tau3");
         branchVector[nFill].push_back(branch_jet_9);
         branchVector[nFill].push_back(branch_jet_10);
+        branchVector[nFill].push_back(branch_jet_11);
       }
       arrayVector[nFill].push_back(array);
       methodVector[nFill] = itClassMap->second;
@@ -583,7 +585,7 @@ void TreeWriter::ProcessJets(vector<ExRootTreeBranch*> branchVector, vector<TObj
   Candidate *candidate = 0, *constituent=0;
   int jets_count=0;
   float hcalEnergy=0,ecalEnergy=0;
-  vector<float> *pt, *eta, *phi, *mass, *mass_pruned, *btag, *HcalEcal, *tau1, *tau2, *tau3, *n_jets;
+  vector<float> *pt, *eta, *phi, *mass, *mass_pruned, *jetcharge, *btag, *HcalEcal, *tau1, *tau2, *tau3, *n_jets;
   
   n_jets = (vector<float>*)((branchVector.at(0))->NewFloatEntry());
   pt = (vector<float>*)((branchVector.at(1))->NewFloatEntry());
@@ -591,13 +593,14 @@ void TreeWriter::ProcessJets(vector<ExRootTreeBranch*> branchVector, vector<TObj
   phi = (vector<float>*)((branchVector.at(3))->NewFloatEntry());
   mass = (vector<float>*)((branchVector.at(4))->NewFloatEntry());
   mass_pruned = (vector<float>*)((branchVector.at(5))->NewFloatEntry());
-  btag = (vector<float>*)((branchVector.at(6))->NewFloatEntry());
-  HcalEcal = (vector<float>*)((branchVector.at(7))->NewFloatEntry());
+  jetcharge   = (vector<float>*)((branchVector.at(6))->NewFloatEntry());
+  btag = (vector<float>*)((branchVector.at(7))->NewFloatEntry());
+  HcalEcal = (vector<float>*)((branchVector.at(8))->NewFloatEntry());
   if(branchVector.size()==11)
   {
-    tau1 = (vector<float>*)((branchVector.at(8))->NewFloatEntry());
-    tau2 = (vector<float>*)((branchVector.at(9))->NewFloatEntry());
-    tau3 = (vector<float>*)((branchVector.at(10))->NewFloatEntry());
+    tau1 = (vector<float>*)((branchVector.at(9))->NewFloatEntry());
+    tau2 = (vector<float>*)((branchVector.at(10))->NewFloatEntry());
+    tau3 = (vector<float>*)((branchVector.at(11))->NewFloatEntry());
   }
     
   arrayVector.at(0)->Sort();
@@ -614,6 +617,7 @@ void TreeWriter::ProcessJets(vector<ExRootTreeBranch*> branchVector, vector<TObj
     phi->push_back(momentum.Phi());
     mass->push_back(momentum.M());
     mass_pruned->push_back(candidate->PrunedMass);
+    jetcharge->push_back(candidate->jetCharge);
     btag->push_back(candidate->BTag);
     //--- loop on the costituens to get Hcal/Ecal
     TIter itConstituents(candidate->GetCandidates());    
