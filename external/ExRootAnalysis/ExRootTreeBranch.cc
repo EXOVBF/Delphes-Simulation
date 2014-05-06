@@ -28,7 +28,7 @@ using namespace std;
 //------------------------------------------------------------------------------
 
 ExRootTreeBranch::ExRootTreeBranch(const char *name, TClass *cl, TTree *tree) :
-  fSize(0), fCapacity(1), fData(0)
+  fSize(0), fCapacity(1),fDataFloat(0), fData(0)
 {
   stringstream message;
 //  cl->IgnoreTObjectStreamer();
@@ -57,7 +57,7 @@ ExRootTreeBranch::ExRootTreeBranch(const char *name, TClass *cl, TTree *tree) :
 // construct a plain branch
 
 ExRootTreeBranch::ExRootTreeBranch(const char *name, TTree *tree) :
-  fDataFloat(0)
+  fDataFloat(0), fData(0)
 {
   if(tree)
   {
