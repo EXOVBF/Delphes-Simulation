@@ -209,6 +209,10 @@ ifeq ($(HAS_CMSSW),true)
 DelphesCMSFWLite$(ExeSuf): \
 	tmp/readers/DelphesCMSFWLite.$(ObjSuf)
 
+DelphesPythia8CMSLHE$(ExeSuf): \
+	tmp/readers/DelphesPythia8CMSLHE.$(ObjSuf)
+
+
 tmp/readers/DelphesCMSFWLite.$(ObjSuf): \
 	readers/DelphesCMSFWLite.cpp \
 	modules/Delphes.h \
@@ -218,11 +222,28 @@ tmp/readers/DelphesCMSFWLite.$(ObjSuf): \
 	external/ExRootAnalysis/ExRootTreeWriter.h \
 	external/ExRootAnalysis/ExRootTreeBranch.h \
 	external/ExRootAnalysis/ExRootProgressBar.h
+
+tmp/readers/DelphesPythia8CMSLHE.$(ObjSuf): \
+	readers/DelphesPythia8CMSLHE.cpp \
+	modules/Delphes.h \
+	classes/DelphesClasses.h \
+	classes/DelphesFactory.h \
+	external/ExRootAnalysis/ExRootTreeWriter.h \
+	external/ExRootAnalysis/ExRootTreeBranch.h \
+	external/ExRootAnalysis/ExRootProgressBar.h
+
+
 EXECUTABLE +=  \
 	DelphesCMSFWLite$(ExeSuf)
 
+EXECUTABLE +=  \
+	DelphesPythia8CMSLHE$(ExeSuf)
+
 EXECUTABLE_OBJ +=  \
 	tmp/readers/DelphesCMSFWLite.$(ObjSuf)
+EXECUTABLE_OBJ +=  \
+	tmp/readers/DelphesPythia8CMSLHE.$(ObjSuf)
+
 
 endif
 
