@@ -596,7 +596,7 @@ void TreeWriter::ProcessJets(vector<ExRootTreeBranch*> branchVector, vector<TObj
   jetcharge   = (vector<float>*)((branchVector.at(6))->NewFloatEntry());
   btag = (vector<float>*)((branchVector.at(7))->NewFloatEntry());
   HcalEcal = (vector<float>*)((branchVector.at(8))->NewFloatEntry());
-  if(branchVector.size()==11)
+  if(branchVector.size()==12)
   {
     tau1 = (vector<float>*)((branchVector.at(9))->NewFloatEntry());
     tau2 = (vector<float>*)((branchVector.at(10))->NewFloatEntry());
@@ -628,7 +628,7 @@ void TreeWriter::ProcessJets(vector<ExRootTreeBranch*> branchVector, vector<TObj
     }
     HcalEcal->push_back(ecalEnergy > 0.0 ? hcalEnergy/ecalEnergy : 999.9);
     //--- only for CA8 jets
-    if(branchVector.size()==11)
+    if(branchVector.size()==12)
     {
       tau1->push_back(candidate->Tau[0]);
       tau2->push_back(candidate->Tau[1]);
