@@ -127,7 +127,8 @@ Candidate::Candidate() :
   P_out(0), 	        // P after momentum smearing
   VertexID_gen(0),
   sumPtSquare(0),       // sum pt^2 of all the tracks originating from the same PV
-  PrunedMass(0)        
+  PrunedMass(0),
+  jetCharge(0)
 {
   Edges[0] = 0.0;
   Edges[1] = 0.0;

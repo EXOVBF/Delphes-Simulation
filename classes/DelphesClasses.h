@@ -506,6 +506,7 @@ public:
   Int_t VertexID_gen;
   Float_t sumPtSquare;
   Float_t PrunedMass;
+  Float_t jetCharge;
 
   static CompBase *fgCompare; //!
   const CompBase *GetCompare() const { return fgCompare; }

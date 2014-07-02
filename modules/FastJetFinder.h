@@ -71,6 +71,9 @@ private:
   Double_t fRcutOff;
   Int_t fN ;
 
+  // --- jet charge power index ---
+  Float_t fKappa;
+
   // --- FastJet Area method --------
 
   fastjet::AreaDefinition *fAreaDefinition;
