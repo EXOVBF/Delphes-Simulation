@@ -23,12 +23,17 @@ set ExecutionPath {
   EFlowMerger
 
   GenJetFinder_ak5
+  GenJetFinder_CA8
   
   Rho
   FastJetFinder_ak5
+  FastJetFinder_CA8
   PileUpJetID_ak5
+  PileUpJetID_CA8
   JetPileUpSubtractor_ak5
+  JetPileUpSubtractor_CA8
   JetEnergyScale_ak5
+  JetEnergyScale_CA8
 
   PhotonEfficiency
   PhotonIsolation
@@ -42,9 +47,12 @@ set ExecutionPath {
   MissingET
 
   BTagging_gen_ak5  
+  BTagging_gen_CA8
   BTagging_ak5  
+  BTagging_CA8
 
   UniqueObjectFinder_ak5
+  UniqueObjectFinder_CA8
 
   TreeWriter
 }
@@ -62,8 +70,8 @@ module PileUpMerger PileUpMerger {
   # pre-generated minbias input file
   set PileUpFile /afs/cern.ch/work/s/spigazzi/public/MinBias_13TeV_1M.pileup
 
-  # average expected pile up 20 for LHC-8TeV
-  set MeanPileUp 20	
+  # average expected pile up 20 for HL-LHC-13TeV
+  set MeanPileUp 140	
   
   # maximum spread in the beam direction in m 
   set ZVertexSpread 0.10
@@ -855,11 +863,5 @@ module TreeWriter TreeWriter {
   add Branch Rho/rho Rho Rho
   add Branch PileUpMerger/vertices Vertex Vertex
   add Branch UniqueObjectFinder_ak5/photons Photon Photon
-#  add Branch ScalarHT/energy ScalarHT ScalarHT
-#  add Branch TrackMerger/tracks Track Track
-#  add Branch Calorimeter/towers Tower Tower
-#  add Branch Calorimeter/eflowTracks EFlowTrack Track
-#  add Branch Calorimeter/eflowTowers EFlowTower Tower
-
 }
 
