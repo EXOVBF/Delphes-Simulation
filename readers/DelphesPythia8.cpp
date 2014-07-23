@@ -130,7 +130,9 @@ bool lhe_event_preselection(vector< vector<float> >* LHE_event, float Mjj_cut, v
         TLorentzVector tmp4vect;
         tmp4vect.SetPxPyPzE(particle.at(6), particle.at(7), particle.at(8), particle.at(9));
         //---Graviton
-        if(branchVector.size() > 19 && particle.at(1) == 2 && abs(particle.at(0)) == 39)
+        if(branchVector.size() > 19 && 
+	   ((particle.at(1) == 2 && abs(particle.at(0)) == 39) || 
+	    (particle.at(1) == 1 && abs(particle.at(0)) == 25)))
         {
             x_pt->push_back(tmp4vect.Pt());
             x_eta->push_back(tmp4vect.Eta());
@@ -422,136 +424,136 @@ int main(int argc, char *argv[])
         std::string sRandomSeed = "Random:seed = "+sSeed;
         //--- random seed from start event number
         pythia->readString("Random:setSeed = on");
-	    pythia->readString("HadronLevel:Hadronize = on");
-	    pythia->readString(sRandomSeed.c_str());        
-	    pythia->readString("Beams:frameType = 4");
-	    pythia->readString(sfile.c_str());
+	pythia->readString("HadronLevel:Hadronize = on");
+	pythia->readString(sRandomSeed.c_str());        
+	pythia->readString("Beams:frameType = 4");
+	pythia->readString(sfile.c_str());
 
-	    pythia->init();
-	    //------------------------------------------------------------------------------------------
-	    //----- initialize fast lhe file reader for preselection -----
-	    ifstream inputLHE (inputFile.c_str(), ios::in);
-	    int count=-1;
-	    int skippedCounter = 0;
-	    char buffer[256];
-	    vector< vector<float> > LHE_event;
-	    //--- start from specified event
-	    while(count < startEvent)
+	pythia->init();
+	//------------------------------------------------------------------------------------------
+	//----- initialize fast lhe file reader for preselection -----
+	ifstream inputLHE (inputFile.c_str(), ios::in);
+	int count=-1;
+	int skippedCounter = 0;
+	char buffer[256];
+	vector< vector<float> > LHE_event;
+	//--- start from specified event
+	while(count < startEvent)
+	{
+	    inputLHE.getline(buffer,256);
+	    while(strcmp(buffer, "<event>") != 0)
 	    {
-		inputLHE.getline(buffer,256);
-		while(strcmp(buffer, "<event>") != 0)
-		{
-		    inputLHE.getline(buffer,258);
-		}
-		count++;
+		inputLHE.getline(buffer,258);
 	    }
-	    if(pythia->LHAeventSkip(startEvent))
+	    count++;
+	}
+	if(pythia->LHAeventSkip(startEvent))
+	{
+	    cout << "### skipped first " << startEvent << " events" << endl;
+	}
+	//------------------------------------------------------------------------------------------
+	ExRootProgressBar progressBar(-1);
+	// Loop over all events
+	errorCounter = 0;
+	eventCounter = 0;
+	modularDelphes->Clear();
+	readStopWatch.Start();
+	while(!interrupted)
+	{
+	    if(eventCounter >= nEvent && nEvent != -1)
 	    {
-		cout << "### skipped first " << startEvent << " events" << endl;
+		break;
 	    }
-	    //------------------------------------------------------------------------------------------
-	    ExRootProgressBar progressBar(-1);
-	    // Loop over all events
-	    errorCounter = 0;
-	    eventCounter = 0;
-	    modularDelphes->Clear();
-	    readStopWatch.Start();
-	    while(!interrupted)
+	    LHE_event.clear();  
+	    //--- end of file check
+	    if(strcmp(buffer, "</LesHouchesEvents>") == 0)        
 	    {
-		if(eventCounter >= nEvent && nEvent != -1)
+		cout << "### end of LHE file reached! ### " << endl;
+		break;
+	    }//--- reads and store the event
+	    else if(strcmp(buffer, "<event>") == 0)
+	    {   
+		int nPart;
+		float info_tmp;
+		inputLHE >> nPart;
+		for(int i=0; i<5; i++)
 		{
-		    break;
+		    inputLHE >> info_tmp;
 		}
-		LHE_event.clear();  
-		//--- end of file check
-		if(strcmp(buffer, "</LesHouchesEvents>") == 0)        
+		for(int i=0; i<nPart; i++)
 		{
-		    cout << "### end of LHE file reached! ### " << endl;
-		    break;
-		}//--- reads and store the event
-		else if(strcmp(buffer, "<event>") == 0)
-		{   
-		    int nPart;
-		    float info_tmp;
-		    inputLHE >> nPart;
-		    for(int i=0; i<5; i++)
+		    vector<float> LHE_particle;
+		    LHE_particle.clear();                
+		    for(int j=0; j<13; j++)
 		    {
 			inputLHE >> info_tmp;
+			LHE_particle.push_back(info_tmp);
 		    }
-		    for(int i=0; i<nPart; i++)
+		    LHE_event.push_back(LHE_particle);
+		}
+		//--- process only selected events
+		if(lhe_event_preselection(&LHE_event, Mjj_cut, branchGen))
+		{
+		    if(!pythia->next())
 		    {
-			vector<float> LHE_particle;
-			LHE_particle.clear();                
-			for(int j=0; j<13; j++)
+			//--- If failure because reached end of file then exit event loop
+			if (pythia->info.atEndOfFile())
 			{
-			    inputLHE >> info_tmp;
-			    LHE_particle.push_back(info_tmp);
+			    cerr << "Aborted since reached end of Les Houches Event File" << endl;
+			    break;
 			}
-			LHE_event.push_back(LHE_particle);
+			//--- keep trace of faulty events
+			errorCounter++;
 		    }
-		    //--- process only selected events
-		    if(lhe_event_preselection(&LHE_event, Mjj_cut, branchGen))
-		    {
-			if(!pythia->next())
-			{
-			    //--- If failure because reached end of file then exit event loop
-			    if (pythia->info.atEndOfFile())
-			    {
-				cerr << "Aborted since reached end of Les Houches Event File" << endl;
-				break;
-			    }
-			    //--- keep trace of faulty events
-			    errorCounter++;
-			}
-			readStopWatch.Stop();
-			//--- delphes simulation fase
-			procStopWatch.Start();
-			ConvertInput(eventCounter, pythia, branchEvent, factory, allParticleOutputArray, stableParticleOutputArray, partonOutputArray, &readStopWatch, &procStopWatch);
-			modularDelphes->ProcessTask();
-			procStopWatch.Stop();
-			//--- filling the output tree
-			treeWriter->Fill();
+		    readStopWatch.Stop();
+		    //--- delphes simulation fase
+		    procStopWatch.Start();
+		    ConvertInput(eventCounter, pythia, branchEvent, factory, allParticleOutputArray, stableParticleOutputArray, partonOutputArray, &readStopWatch, &procStopWatch);
+		    modularDelphes->ProcessTask();
+		    procStopWatch.Stop();
+		    //--- filling the output tree
+		    treeWriter->Fill();
     
-			//--- logistic 
-			//treeWriter->Clear();
-			modularDelphes->Clear();
-			readStopWatch.Start();
+		    //--- logistic 
+		    //treeWriter->Clear();
+		    modularDelphes->Clear();
+		    readStopWatch.Start();
+		}
+		else
+		{
+		    if(pythia->LHAeventSkip(1))
+		    {
+			skippedCounter++;
 		    }
 		    else
 		    {
-			if(pythia->LHAeventSkip(1))
-			{
-			    skippedCounter++;
-			}
-			else
-			{
-			    cout << "### ERROR: couldn't skip event" << endl;
-			}
+			cout << "### ERROR: couldn't skip event" << endl;
 		    }
-		    eventCounter++;
-		    progressBar.Update(eventCounter, eventCounter);
-        	}
-        	inputLHE.getline(buffer,256);
-	    }	
-	    progressBar.Update(eventCounter, eventCounter, kTRUE);
-	    progressBar.Finish();
+		}
+		eventCounter++;
+		progressBar.Update(eventCounter, eventCounter);
+	    }
+	    inputLHE.getline(buffer,256);
+	}	
+	progressBar.Update(eventCounter, eventCounter, kTRUE);
+	progressBar.Finish();
 
-	    cout << "--------------------Statistics---------------------" << endl;
-	    cout << "-#######  read events:        " << eventCounter << endl; 
-	    cout << "-#######  failed events:      " << errorCounter << endl;
-	    cout << "-#######  skipped events:     " << skippedCounter << endl;
-	    cout << "---------------------------------------------------" << endl;
+	cout << "--------------------Statistics---------------------" << endl;
+	cout << "-#######  read events:        " << eventCounter << endl; 
+	cout << "-#######  failed events:      " << errorCounter << endl;
+	cout << "-#######  skipped events:     " << skippedCounter << endl;
+	cout << "---------------------------------------------------" << endl;
         
-	    modularDelphes->FinishTask();
-	    treeWriter->Write();
+	modularDelphes->FinishTask();
+	treeWriter->Write();
     
-	    cout << endl <<  "** Exiting..." << endl;
+	cout << endl <<  "** Exiting..." << endl;
 
-	    delete pythia;
-	    delete confReader;
-	    delete outputFile;
-
-	    return 0;
+	delete pythia;
+	//delete modularDelphes;
+	delete confReader;
+	    
+	return 0;
     }
     catch(runtime_error &e)
     {
