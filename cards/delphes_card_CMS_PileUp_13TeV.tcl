@@ -51,9 +51,6 @@ set ExecutionPath {
   BTagging_ak5  
   BTagging_CA8
 
-  UniqueObjectFinder_ak5
-  UniqueObjectFinder_CA8
-
   TreeWriter
 }
 
@@ -850,18 +847,18 @@ module UniqueObjectFinder UniqueObjectFinder_CA8 {
 # ROOT tree writer
 ##################
 
-module TreeWriter TreeWriter {
-#  add Branch InputArray BranchName BranchClass
-  add Branch UniqueObjectFinder_ak5/electrons Electron Electron
-  add Branch UniqueObjectFinder_ak5/muons Muon Muon
-#  add Branch Delphes/allParticles Particle GenParticle 
-  add Branch MissingET/momentum MissingET MissingET
-  add Branch GenJetFinder_ak5/jets gen_jet_ak5 Jet
-  add Branch UniqueObjectFinder_ak5/jets_ak5 jet_ak5 Jet
-  add Branch GenJetFinder_CA8/jets gen_jet_CA8 Jet  
-  add Branch UniqueObjectFinder_CA8/jets_CA8 jet_CA8 Jet
-  add Branch Rho/rho Rho Rho
-  add Branch PileUpMerger/vertices Vertex Vertex
-  add Branch UniqueObjectFinder_ak5/photons Photon Photon
+module TreeWriter TreeWriter {    
+    #  add Branch InputArray BranchName BranchClass
+    add Branch ElectronIsolation/electrons Electron Electron
+    add Branch MuonIsolation/muons Muon Muon
+    #  add Branch Delphes/allParticles Particle GenParticle 
+    add Branch MissingET/momentum MissingET MissingET
+    add Branch GenJetFinder_ak5/jets gen_jet_ak5 Jet
+    add Branch JetPileUpSubtractor_ak5/jets jet_ak5 Jet
+    add Branch GenJetFinder_CA8/jets gen_jet_CA8 Jet  
+    add Branch JetPileUpSubtractor_CA8/jets jet_CA8 Jet
+    add Branch Rho/rho Rho Rho
+    add Branch PileUpMerger/vertices Vertex Vertex
+    #  add Branch UniqueObjectFinder_ak5/photons Photon Photon
 }
 
