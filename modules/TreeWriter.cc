@@ -439,7 +439,7 @@ void TreeWriter::ProcessVertices(vector<ExRootTreeBranch*> branchVector, vector<
     {
       j++;
       TLorentzVector position2 = candidate2->Position;
-      if( TMath::Abs(position1.Z() - position2.Z()) < 0.1 && candidate2->VertexID_gen != candidate1->VertexID_gen)
+      if(TMath::Abs(position1.Z() - position2.Z()) < 0.05 && candidate2->VertexID_gen != candidate1->VertexID_gen)
       {
         if(candidate2->IsPU == 0)
         {
