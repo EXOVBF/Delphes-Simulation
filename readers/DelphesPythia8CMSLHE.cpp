@@ -37,49 +37,49 @@
 
 class LHAupMM : public Pythia8::LHAup {
 public:
-  LHAupMM(){}
+    LHAupMM(){}
 
-  void loadRunInfo(const lhef::HEPRUP  &heprup){ this->heprup = &heprup; }
-  void loadEvent(const lhef::HEPEUP &hepeup){ this->hepeup = &hepeup; }
+    void loadRunInfo(const lhef::HEPRUP  &heprup){ this->heprup = &heprup; }
+    void loadEvent(const lhef::HEPEUP &hepeup){ this->hepeup = &hepeup; }
 
-  bool setInit();
-  bool setEvent(int dummy);
+    bool setInit();
+    bool setEvent(int dummy);
 
-  const lhef::HEPEUP *hepeup;
-  const lhef::HEPRUP *heprup;
+    const lhef::HEPEUP *hepeup;
+    const lhef::HEPRUP *heprup;
 };
 
 
 bool LHAupMM::setInit()
 {
   
-  setBeamA(heprup->IDBMUP.first, heprup->EBMUP.first,
-	   heprup->PDFGUP.first, heprup->PDFSUP.first);
-  setBeamB(heprup->IDBMUP.second, heprup->EBMUP.second,
-	   heprup->PDFGUP.second, heprup->PDFSUP.second);
-  setStrategy(heprup->IDWTUP);
+    setBeamA(heprup->IDBMUP.first, heprup->EBMUP.first,
+	     heprup->PDFGUP.first, heprup->PDFSUP.first);
+    setBeamB(heprup->IDBMUP.second, heprup->EBMUP.second,
+	     heprup->PDFGUP.second, heprup->PDFSUP.second);
+    setStrategy(heprup->IDWTUP);
   
-  for(int i = 0; i < heprup->NPRUP; i++)
-    addProcess(heprup->LPRUP[i], heprup->XSECUP[i],
-	       heprup->XERRUP[i], heprup->XMAXUP[i]);
-  return true;
+    for(int i = 0; i < heprup->NPRUP; i++)
+	addProcess(heprup->LPRUP[i], heprup->XSECUP[i],
+		   heprup->XERRUP[i], heprup->XMAXUP[i]);
+    return true;
 }
 bool LHAupMM::setEvent(int dummy)
 {
   
   
-  setProcess(hepeup->IDPRUP, hepeup->XWGTUP, hepeup->SCALUP,hepeup->AQEDUP, hepeup->AQCDUP);
+    setProcess(hepeup->IDPRUP, hepeup->XWGTUP, hepeup->SCALUP,hepeup->AQEDUP, hepeup->AQCDUP);
   
-  for(int i = 0; i < hepeup->NUP; i++)
-    addParticle(hepeup->IDUP[i], hepeup->ISTUP[i],
-		hepeup->MOTHUP[i].first, hepeup->MOTHUP[i].second,
-		hepeup->ICOLUP[i].first, hepeup->ICOLUP[i].second,
-		hepeup->PUP[i][0], hepeup->PUP[i][1],
-		hepeup->PUP[i][2], hepeup->PUP[i][3],
-		hepeup->PUP[i][4], hepeup->VTIMUP[i],
-		hepeup->SPINUP[i]);
+    for(int i = 0; i < hepeup->NUP; i++)
+	addParticle(hepeup->IDUP[i], hepeup->ISTUP[i],
+		    hepeup->MOTHUP[i].first, hepeup->MOTHUP[i].second,
+		    hepeup->ICOLUP[i].first, hepeup->ICOLUP[i].second,
+		    hepeup->PUP[i][0], hepeup->PUP[i][1],
+		    hepeup->PUP[i][2], hepeup->PUP[i][3],
+		    hepeup->PUP[i][4], hepeup->VTIMUP[i],
+		    hepeup->SPINUP[i]);
   
-  return true;
+    return true;
 }
 
 
@@ -237,9 +237,9 @@ bool lhe_event_preselection(vector< vector<float> >* LHE_event, float Mjj_cut, v
 //**************************************************************************************************
 
 void ConvertInput(Long64_t eventCounter, Pythia8::Pythia *pythia,
-    ExRootTreeBranch *branch, DelphesFactory *factory,
-    TObjArray *allParticleOutputArray, TObjArray *stableParticleOutputArray, TObjArray *partonOutputArray,
-    TStopwatch *readStopWatch, TStopwatch *procStopWatch)
+		  ExRootTreeBranch *branch, DelphesFactory *factory,
+		  TObjArray *allParticleOutputArray, TObjArray *stableParticleOutputArray, TObjArray *partonOutputArray,
+		  TStopwatch *readStopWatch, TStopwatch *procStopWatch)
 {
     int i;
 
@@ -465,12 +465,12 @@ int main(int argc, char *argv[])
             throw runtime_error("can't create Pythia instance");
         }
         std::string sSeed = "0";
-	    float Mjj_cut = 150;
-	    if (argc >= 5)
-	    {
-	        Mjj_cut = atoi(argv[4]);
-	    }
-	    int startEvent = 0, nEvent = -1;
+	float Mjj_cut = 150;
+	if (argc >= 5)
+	{
+	    Mjj_cut = atoi(argv[4]);
+	}
+	int startEvent = 0, nEvent = -1;
         if (argc >= 6) 
         {
             startEvent = atoi(argv[5]);
@@ -497,8 +497,8 @@ int main(int argc, char *argv[])
 	inf = TFile::Open(inputFile.c_str());
 
 	if(inf == NULL){
-	  message << "can't open " << inputFile << endl;
-	  throw runtime_error(message.str());
+	    message << "can't open " << inputFile << endl;
+	    throw runtime_error(message.str());
 	}
 
 	fwlite::Run run(inf);
@@ -549,8 +549,8 @@ int main(int argc, char *argv[])
         //--- start from specified event
         while(count < startEvent)
         {
-	  ++event;
-	  count++;
+	    ++event;
+	    count++;
         }
 	fwlite::Handle<LHEEventProduct> handlelhe;
 	handlelhe.getByLabel(event,"externalLHEProducer");
@@ -558,9 +558,9 @@ int main(int argc, char *argv[])
 	genreader.loadEvent(hp);
 
         if(pythia->LHAeventSkip(startEvent))
-	  {
+	{
             cout << "### skipped first " << startEvent << " events" << endl;
-	  }
+	}
         //------------------------------------------------------------------------------------------
         ExRootProgressBar progressBar(-1);
         // Loop over all events
@@ -569,11 +569,11 @@ int main(int argc, char *argv[])
         modularDelphes->Clear();
         readStopWatch.Start();
         while(event)
-	  {
+	{
             if(eventCounter >= nEvent && nEvent != -1)
-	      {
+	    {
                 break;
-	      }
+	    }
             LHE_event.clear();  
             //--- end of file check
 	    //fwlite::Handle<LHEEventProduct> handlelhe;
@@ -583,7 +583,7 @@ int main(int argc, char *argv[])
 	    genreader.loadEvent(hepeup);
 
 	    for(int i=0; i<hepeup.NUP; i++)
-	      {
+	    {
 		vector<float> LHE_particle;
 		LHE_particle.clear();                
 		LHE_particle.push_back(hepeup.IDUP[i]);
@@ -593,26 +593,27 @@ int main(int argc, char *argv[])
 		LHE_particle.push_back(hepeup.ICOLUP[i].first);
 		LHE_particle.push_back(hepeup.ICOLUP[i].second);
 		for(int j=0;j<5;j++)
-		  LHE_particle.push_back((hepeup.PUP[i])[j]);
+		    LHE_particle.push_back((hepeup.PUP[i])[j]);
 		LHE_particle.push_back(hepeup.VTIMUP[i]);
 		LHE_particle.push_back(hepeup.SPINUP[i]);
 		
 		LHE_event.push_back(LHE_particle);
-	      }
+	    }
 	    //--- process only selected events
 	    if(lhe_event_preselection(&LHE_event, Mjj_cut, branchGen))
-	      {
+	    {
+		pythia->next();
 		if(!pythia->next())
-		  {
+		{
 		    //--- If failure because reached end of file then exit event loop
 		    if (pythia->info.atEndOfFile())
-		      {
+		    {
 			cerr << "Aborted since reached end of Les Houches Event File" << endl;
 			break;
-		      }
+		    }
 		    //--- keep trace of faulty events
 		    errorCounter++;
-		  }
+		}
 		readStopWatch.Stop();
 		//--- delphes simulation fase
 		procStopWatch.Start();
@@ -626,22 +627,22 @@ int main(int argc, char *argv[])
 		//treeWriter->Clear();
 		modularDelphes->Clear();
 		readStopWatch.Start();
-	      }
+	    }
 	    else
-	      {
+	    {
 		if(pythia->LHAeventSkip(1))
-		  {
+		{
 		    skippedCounter++;
-		  }
+		}
 		else
-		  {
+		{
 		    cout << "### ERROR: couldn't skip event" << endl;
-		  }
-	      }
+		}
+	    }
 	    eventCounter++;
 	    progressBar.Update(eventCounter, eventCounter);	    
 	    ++event;
-	  }	
+	}	
         progressBar.Update(eventCounter, eventCounter, kTRUE);
         progressBar.Finish();
 
@@ -670,3 +671,4 @@ int main(int argc, char *argv[])
         return 1;
     }
 }
+

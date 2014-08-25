@@ -268,6 +268,11 @@ dictDeps {DELPHES_DICT} {modules/Pythia8LinkDef.h}
 puts {endif}
 puts {}
 
+puts {ifeq ($(HAS_PYTHIA8),true)}
+executableDeps {readers/DelphesPythia8CMSLHE.cpp}
+puts {endif}
+puts {}
+
 dictDeps {DELPHES_DICT} {classes/ClassesLinkDef.h} {modules/ModulesLinkDef.h} {external/ExRootAnalysis/ExRootAnalysisLinkDef.h}
 
 dictDeps {DISPLAY_DICT} {display/DisplayLinkDef.h}

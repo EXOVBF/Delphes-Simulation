@@ -15,7 +15,7 @@ endif
 
 SrcSuf = cc
 
-CXXFLAGS += -g $(ROOTCFLAGS) -Wno-write-strings -D_FILE_OFFSET_BITS=64 -DDROP_CGAL -I. -Iexternal -Iexternal/tcl
+CXXFLAGS += $(ROOTCFLAGS) -Wno-write-strings -D_FILE_OFFSET_BITS=64 -DDROP_CGAL -I. -Iexternal -Iexternal/tcl
 DELPHES_LIBS = $(shell $(RC) --libs) -lEG $(SYSLIBS)
 DISPLAY_LIBS = $(shell $(RC) --evelibs) $(SYSLIBS)
 
@@ -209,10 +209,6 @@ ifeq ($(HAS_CMSSW),true)
 DelphesCMSFWLite$(ExeSuf): \
 	tmp/readers/DelphesCMSFWLite.$(ObjSuf)
 
-DelphesPythia8CMSLHE$(ExeSuf): \
-	tmp/readers/DelphesPythia8CMSLHE.$(ObjSuf)
-
-
 tmp/readers/DelphesCMSFWLite.$(ObjSuf): \
 	readers/DelphesCMSFWLite.cpp \
 	modules/Delphes.h \
@@ -222,28 +218,11 @@ tmp/readers/DelphesCMSFWLite.$(ObjSuf): \
 	external/ExRootAnalysis/ExRootTreeWriter.h \
 	external/ExRootAnalysis/ExRootTreeBranch.h \
 	external/ExRootAnalysis/ExRootProgressBar.h
-
-tmp/readers/DelphesPythia8CMSLHE.$(ObjSuf): \
-	readers/DelphesPythia8CMSLHE.cpp \
-	modules/Delphes.h \
-	classes/DelphesClasses.h \
-	classes/DelphesFactory.h \
-	external/ExRootAnalysis/ExRootTreeWriter.h \
-	external/ExRootAnalysis/ExRootTreeBranch.h \
-	external/ExRootAnalysis/ExRootProgressBar.h
-
-
 EXECUTABLE +=  \
 	DelphesCMSFWLite$(ExeSuf)
 
-EXECUTABLE +=  \
-	DelphesPythia8CMSLHE$(ExeSuf)
-
 EXECUTABLE_OBJ +=  \
 	tmp/readers/DelphesCMSFWLite.$(ObjSuf)
-EXECUTABLE_OBJ +=  \
-	tmp/readers/DelphesPythia8CMSLHE.$(ObjSuf)
-
 
 endif
 
@@ -317,6 +296,12 @@ DELPHES_DICT +=  \
 
 DELPHES_DICT_OBJ +=  \
 	tmp/modules/Pythia8Dict.$(ObjSuf)
+
+endif
+
+ifeq ($(HAS_PYTHIA8),true)
+EXECUTABLE +=  \
+	
 
 endif
 
