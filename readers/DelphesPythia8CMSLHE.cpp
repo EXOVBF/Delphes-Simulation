@@ -602,7 +602,6 @@ int main(int argc, char *argv[])
 	    //--- process only selected events
 	    if(lhe_event_preselection(&LHE_event, Mjj_cut, branchGen))
 	      {
-		pythia->next();
 		if(!pythia->next())
 		  {
 		    //--- If failure because reached end of file then exit event loop
