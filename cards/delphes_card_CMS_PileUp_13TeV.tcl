@@ -888,8 +888,8 @@ module TreeWriter TreeWriter {
     add Branch MissingET/momentum MissingET MissingET
     add Branch GenJetFinder_ak5/jets gen_jet_ak5 Jet
     add Branch JetPileUpSubtractor_ak5/jets jet_ak5 Jet
-    add Branch GenJetFinder_CA8/jets gen_jet_CA8 Jet  
-    add Branch JetPileUpSubtractor_CA8/jets jet_CA8 Jet
+#    add Branch GenJetFinder_CA8/jets gen_jet_CA8 Jet  
+#    add Branch JetPileUpSubtractor_CA8/jets jet_CA8 Jet
     add Branch Rho/rho Rho Rho
     add Branch PileUpMerger/vertices Vertex Vertex
     #  add Branch UniqueObjectFinder_ak5/photons Photon Photon
